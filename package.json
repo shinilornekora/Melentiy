@@ -1,0 +1,19 @@
+{
+  "name": "melentiy",
+  "version": "1.0.0",
+  "description": "A useful tool for frontenders.",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon -e js,css,html ./index.js",
+    "start:prestable": "node ./index.js"
+  },
+  "author": "Shiniasse",
+  "license": "ISC",
+  "dependencies": {
+    "express": "4.21.1",
+    "fs": "0.0.1-security"
+  },
+  "devDependencies": {
+    "nodemon": "3.1.7"
+  }
+}

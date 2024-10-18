@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="styles.css">
+        <title>Melentiy workbench</title>
+    </head>
+    <body>
+        <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+        <main class="wrapper">
+            <header class="title">
+                What will we build today?
+            </header>
+            <section class="subtitle">
+                Choose your project topic, highlight the things do you want to add into you project (maybe, animations, or any specific frameworks, ...etc)
+            </section>
+            <form method="post" action="/generate" class="wrapper" target="dummyframe">
+                <textarea 
+                    id="projectDescription"
+                    placeholder="Write your beautiful theme there..."
+                    class="topic"
+                    title="write the project description"
+                    aria-label="write the project description"
+                ></textarea>
+                <input 
+                    type="submit" 
+                    class="actionButton" 
+                    value="Generate!" 
+                    title="generate a project"
+                    aria-label="generate a project"
+                />
+            </form>  
+        </main>    
+    </body>
+</html>
