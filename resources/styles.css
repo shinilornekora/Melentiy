@@ -1,0 +1,52 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+html, body, main {
+    height: 100%;
+    width: 100%;
+}
+
+.wrapper {
+    display: flex;
+    gap: 50px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.title {
+    font-weight: bold;
+    font-size: 6vw;
+}
+
+.subtitle {
+    font-weight: 300;
+    font-size: 2vw;
+    max-width: 70vw;
+    text-align: center;
+}
+
+.topic {
+    width: 40vw;
+    height: 30dvh;
+    border: 2px solid black;
+    padding: 16px;
+    border-radius: 16px;
+}
+
+.actionButton {
+    padding: 10px 20px;
+    border: 2px solid black;
+    border-radius: 12px;
+    background-color: aliceblue;
+    transition: 600ms;
+}
+
+.actionButton:hover {
+    cursor: pointer;
+    background-color: black;
+    color: aliceblue;
+}
