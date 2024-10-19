@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser')
 const fs = require('fs').promises;
 const generator = require('./src/generator');
 
@@ -7,11 +8,13 @@ const PORT = 3001;
 const HOSTNAME = 'http://localhost';
 
 server.use(express.static('resources'));
+server.use(bodyParser.urlencoded({ extended: true }));
 
 server.post('/generate', (req, res) => {
-    console.log('found: ', req.body)
+    const description = req.body.description;
+
     try {
-        const generated = generator('');
+        const generated = generator(description);
 
         res.status(200).json(generated);
     } catch (err) {
