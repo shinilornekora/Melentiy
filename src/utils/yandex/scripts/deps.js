@@ -8,6 +8,14 @@ module.exports = function getProjectDepsScript(description) {
         NO RUSSIAN WORDS, ONLY DEPENDENCIES, IN LOWERCASE!
         Show me NOTHING except it. NOTHING AT ALL EXCEPT IT!!
 
+        MIN DEPS COUNT: 5
+        MAX DEPS COUNT: 10
+
+        ANSWER SHOULD LOOK LIKE THIS: DEPS: <dep1>, <dep2>, ...
+        THAT IS THIRD SETTINGS JSON FIELD.
+
+        IT CANNOT BE EMPTY!!
+
         IDEA: ${description}
     `;
 }

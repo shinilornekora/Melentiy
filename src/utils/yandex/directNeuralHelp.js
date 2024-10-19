@@ -1,4 +1,5 @@
 const { promises } = require('fs');
+const extractAliceAnswer = require('./utils/extractGPTAnswer');
 
 module.exports = async function directNeuralHelp({
     temperature,
@@ -28,7 +29,14 @@ module.exports = async function directNeuralHelp({
         messages: [
             {
                 role: 'system',
-                text: 'You are the model which knows everything about frontend.'
+                text: `
+                    You are the model which knows everything about frontend. 
+                    No markdown or any emotions.
+                    Your answers must be 100% correct.
+                    Reanalyze the answer if you are not sure about it.
+                    All your answers must be in English.
+                    No any explicit poliness, just pure answers.
+                `
             },
             {
                 role: 'user',
