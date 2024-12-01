@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs').promises;
-const generator = require('./src/generator');
+const ProjectGenerator = require('./src/ProjectGenerator');
 
 const server = express();
 const PORT = 3001;
@@ -19,11 +19,14 @@ const sendErrorResponse = (res, statusCode, message, errorDetails) => {
 
 server.post('/generate', async (req, res) => {
     const { description } = req.body;
-
+    
     try {
-        const generated = await generator(description);
-        res.status(200).json(generated);
+        const generator = new ProjectGenerator(description); 
+        await generator.generateProject();
+
+        res.status(200).json({ message: 'Project generated successfully.' });
     } catch (err) {
+        console.error(err)
         sendErrorResponse(res, 500, 'Critical error occurred during response.', err);
     }
 });
@@ -31,6 +34,7 @@ server.post('/generate', async (req, res) => {
 server.get('/', async (_, res) => {
     try {
         const data = await fs.readFile('./resources/index.html');
+
         res.setHeader('Content-Type', 'text/html');
         res.send(data);
     } catch (err) {
