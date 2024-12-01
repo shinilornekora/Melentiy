@@ -1,7 +1,7 @@
 const promises = require('fs').promises;
 const extractAliceAnswer = require('./utils/extractGPTAnswer');
 
-const SECRET_PATH = `${__dirname}/../../secrets`;
+const SECRET_PATH = `${__dirname}/../../../secrets`;
 
 async function readSecrets() {
     try {
