@@ -1,5 +1,5 @@
 const express = require('express');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 const fs = require('fs').promises;
 const generator = require('./src/generator');
 
@@ -10,22 +10,23 @@ const HOSTNAME = 'http://localhost';
 server.use(express.static('resources'));
 server.use(bodyParser.urlencoded({ extended: true }));
 
-server.post('/generate', (req, res) => {
-    const description = req.body.description;
+const sendErrorResponse = (res, statusCode, message, errorDetails) => {
+    res.status(statusCode).json({
+        message,
+        additionals: errorDetails ? { mainError: errorDetails } : null,
+    });
+};
+
+server.post('/generate', async (req, res) => {
+    const { description } = req.body;
 
     try {
-        const generated = generator(description);
-
+        const generated = await generator(description);
         res.status(200).json(generated);
     } catch (err) {
-        res.status(500).json({
-            message: 'Critical error occured during response.',
-            additionals: {
-                mainError: err
-            }
-        })
+        sendErrorResponse(res, 500, 'Critical error occurred during response.', err);
     }
-})
+});
 
 server.get('/', async (_, res) => {
     try {
@@ -33,8 +34,8 @@ server.get('/', async (_, res) => {
         res.setHeader('Content-Type', 'text/html');
         res.send(data);
     } catch (err) {
-        console.log(err)
-        res.status(500).send('Error reading file');
+        console.log(err);
+        sendErrorResponse(res, 500, 'Error reading file');
     }
 });
 
