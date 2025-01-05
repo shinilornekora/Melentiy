@@ -70,7 +70,34 @@ module.exports = async function directNeuralHelp({
         });
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch from API. Status: ${response.status}`);
+            const { bodyUsed, redirected, status, statusText, type, url } = response;
+
+            const rootCause = JSON.stringify(await response.json());
+            const sentHeaders = JSON.stringify(headers);
+
+            // If somnething went bad and you are kitten to handle all this strange things
+            const helpText = status === 401 ? 'Wrong API key or you didn\'t provide it' :
+                status === 403 ? 'Bad API key, regenerate it' : 
+                status === 400 ? 'You did something bad with the request or model API structure was changed' :
+                status === 429 ? 'Whoa, too many requests, model wants to sleep a little, give it a break' :
+                status === 500 ? 'Model died. Try different one' :
+                'UNKNOWN ERROR! Search for it there: https://yandex.cloud/ru/docs/api-design-guide/concepts/errors'
+
+
+            throw new Error(`
+                Failed to fetch from API.
+                Possible reason: ${helpText}
+
+                URL: ${url}
+                Type: ${type}
+                StatusText: ${statusText}
+                MODEL URI: ${MODEL_URI}
+                Status: ${status}
+                Headers: ${sentHeaders}
+                Body: ${rootCause}
+                WasBodyUsed: ${bodyUsed}
+                Redirected: ${redirected}
+            `);
         }
 
         const data = await response.json();

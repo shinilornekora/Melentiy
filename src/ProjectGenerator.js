@@ -69,8 +69,13 @@ class ProjectGenerator {
     async getProjectStructure() {
         let { A_TYPE, DEPS } = this.project.settings;
 
-        if (!ARCH_TYPES[A_TYPE]) {
-            throw new Error('Model gave non-existing arch type.');
+        const [ A_INDEX, EXPLANATION ] = A_TYPE.split(' - ');
+
+        if (!ARCH_TYPES[Number(A_INDEX)]) {
+            throw new Error(```
+                Model gave non-existing arch type.
+                Her explanation: ${EXPLANATION}
+            ```);
         }
         
         const foldersScript = _srcScript(A_TYPE, DEPS);
@@ -104,6 +109,7 @@ class ProjectGenerator {
         }
 
         // TODO: Need to persue model to avoid such tricks
+        // TODO_COMMENT_2024: seems like impossible for now, waiting for the next gen...
         if (structure.src) {
             structure = structure.src;
         }
@@ -145,10 +151,58 @@ class ProjectGenerator {
         }
     }
 
+    async insertPackageJSONInProjectStructure() {
+        const { DEPS, P_NAME } = this.project.settings;
+        const resolvedDeps = DEPS.split(',');
+    
+        const getLatestVersion = async (packageName) => {
+            const exec = require('child_process').execSync;
+
+            try {
+                const result = exec(`npm show ${packageName} version`).toString().trim();
+                
+                return result;
+            } catch (error) {
+                console.error(`Error fetching version for ${packageName}:`, error.message);
+            }
+        };
+    
+        const dependencies = {};
+
+        for (const dep of resolvedDeps) {
+            const version = await getLatestVersion(dep.trim());
+            if (version) {
+                dependencies[dep.trim()] = version;
+            }
+        }
+    
+        const packageJsonContent = {
+            name: P_NAME,
+            version: '1.0.0',
+            description: this.description,
+            scripts: {
+                start: "nodemon -e js,css,html ./index.js",
+            },
+            dependencies: dependencies,
+            devDependencies: {
+                nodemon: "3.1.7"
+            }
+        };
+        
+        this.project.structure = {
+            ...this.project.structure,
+            [P_NAME]: {
+                ...this.project.structure[P_NAME],
+                'package.json': JSON.stringify(packageJsonContent)
+            }
+        }
+    }
+
     async createRealProjectStructure(structure, basePath = BASE_PATH) {
         for (const [key, value] of Object.entries(structure)) {
             const currentPath = path.join(basePath, key);
     
+            // For cascade insert, e.g. READMEs
             if (typeof value === 'object' && !Array.isArray(value)) {
                 console.log(currentPath, { recursive: true });
     
@@ -156,12 +210,14 @@ class ProjectGenerator {
     
                 if (value.readme) {
                     const readmePath = path.join(currentPath, 'README.md');
+
                     await fs.writeFile(readmePath, value.readme);
                 }
     
                 await this.createRealProjectStructure(value, currentPath);
             }
     
+            // For empty files
             if (Array.isArray(value)) {
                 for (const file of value) {
                     const filePath = path.join(basePath, key, file);
@@ -172,6 +228,12 @@ class ProjectGenerator {
                     await fs.writeFile(filePath, '');
                 }
             }
+
+            // For contentful files that have extension
+            if (typeof value === 'string' && key.includes('.')) {
+                console.log('\n', currentPath, '\n')
+                await fs.writeFile(currentPath, value)
+            }
         }
     }
 
@@ -179,6 +241,7 @@ class ProjectGenerator {
         await this.getProjectSettings();
         await this.getProjectStructure();
         await this.insertREADMEFilesInOuterFolders();
+        await this.insertPackageJSONInProjectStructure();
         await this.createRealProjectStructure(this.project.structure);
 
         console.log('Real project was generated successfully.')
