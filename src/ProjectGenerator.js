@@ -13,10 +13,22 @@ const {
     readmes: _readmesScript,
 } = require('./utils/scripts/structure');
 
+const {
+    indexPage: _indexPage,
+    indexStyle: _indexStyle,
+    indexJs: _indexScript,
+} = require('./utils/scripts/code');
+
 const directNeuralHelp = require('./utils/models/yandex/directNeuralHelp');
 
 const BASE_PATH = '../test_projects';
 const ARCH_TYPES = ['fsd', 'microfronts', 'module', 'clean', 'ddd'];
+
+function maybeExtractTextBetweenQuotes(text) {
+    const match = text.match(/```(.?)```/);
+
+    return match ? match[1] : text;
+}
 
 class ProjectGenerator {
     constructor(text) {
@@ -110,6 +122,7 @@ class ProjectGenerator {
 
         // TODO: Need to persue model to avoid such tricks
         // TODO_COMMENT_2024: seems like impossible for now, waiting for the next gen...
+        // TODO_COMMENT_2025: still impossible, why is it so?!
         if (structure.src) {
             structure = structure.src;
         }
@@ -134,8 +147,8 @@ class ProjectGenerator {
 
         const mergedStructure = Object.keys(structure).reduce((acc, key) => {
             acc[key] = {
-              files: structure[key],
-              readme: readmeContents[key] || 'No README provided.'
+                files: structure[key],
+                readme: readmeContents[key] || 'No README provided.'
             };
     
             return acc;
@@ -237,22 +250,111 @@ class ProjectGenerator {
         }
     }
 
-    async build() {
+    async insertIndexPageInProjectStructure() {
+        const { DEPS, P_NAME } = this.project.settings;
+        const resolvedDeps = DEPS.split(',');
+
+        const indexPageScript = _indexPage(this.description, resolvedDeps, this.project.structure);
+        const modelAnswer = await directNeuralHelp({
+            temperature: 0.6,
+            maxTokens: 1500,
+            mainMessage: indexPageScript,
+            messages: []
+        });
+
+        // The power of markdown is infinite, for some reason
+        const pureAnswer = maybeExtractTextBetweenQuotes(modelAnswer)
+
+        this.project.structure = {
+            ...this.project.structure,
+            [P_NAME]: {
+                ...this.project.structure[P_NAME],
+                public: {
+                    'index.html': pureAnswer
+                }
+            }
+        }
+    }
+
+    async insertBasicIndexStyles() {
+        const { P_NAME } = this.project.settings;
+
+        const htmlCode = this.project.structure[P_NAME].public['index.html'];
+        const prompt = _indexStyle(htmlCode, this.description);
+
+        const modelAnswer = await directNeuralHelp({
+            temperature: 0.6,
+            maxTokens: 1500,
+            mainMessage: prompt,
+            messages: []
+        });
+
+        const pureAnswer = maybeExtractTextBetweenQuotes(modelAnswer)
+
+        this.project.structure = {
+            ...this.project.structure,
+            [P_NAME]: {
+                ...this.project.structure[P_NAME],
+                public: {
+                    ...this.project.structure[P_NAME].public,
+                    'styles.css': pureAnswer
+                }
+            }
+        }
+    }
+
+    async insertIndexJSFile() {
+        const { DEPS, P_NAME } = this.project.settings;
+        const resolvedDeps = DEPS.split(',');
+
+        const htmlCode = this.project.structure[P_NAME].public['index.html'];
+        const prompt = _indexScript(htmlCode, resolvedDeps, this.description);
+
+        const modelAnswer = await directNeuralHelp({
+            temperature: 0.6,
+            maxTokens: 1500,
+            mainMessage: prompt,
+            messages: []
+        });
+
+        const pureAnswer = maybeExtractTextBetweenQuotes(modelAnswer)
+
+        this.project.structure = {
+            ...this.project.structure,
+            [P_NAME]: {
+                ...this.project.structure[P_NAME],
+                'index.js': pureAnswer
+            }
+        }
+    }
+
+    async getProjectInitials() {
         await this.getProjectSettings();
         await this.getProjectStructure();
+    }
+
+    async getAbstractProjectTree() {
         await this.insertREADMEFilesInOuterFolders();
         await this.insertPackageJSONInProjectStructure();
-        await this.createRealProjectStructure(this.project.structure);
+        await this.insertIndexPageInProjectStructure();
+        await this.insertBasicIndexStyles();
+        await this.insertIndexJSFile();
+    }
 
-        console.log('Real project was generated successfully.')
+    async build() {
+        await this.getProjectInitials();
+        await this.getAbstractProjectTree();
+        await this.createRealProjectStructure(this.project.structure);
     }
 
     // UX-method.
     async generateProject() {
         try {
             await this.build();
+
+            console.log('All build steps were completed. Project was generated.')
         } catch (error) {
-            console.log('Project wasn\'t generated.');
+            console.log('Project was NOT generated.');
             console.error(error);
         }
     }
