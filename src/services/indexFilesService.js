@@ -2,8 +2,8 @@ const {
     indexPage: _indexPage,
     indexStyle: _indexStyle,
     indexJs: _indexScript,
-} = require('../utils/scripts/code');
-const directNeuralHelp = require('../utils/models/yandex/directNeuralHelp');
+} = require('../llm/scripts/code');
+const directNeuralHelp = require('../llm/models/yandex/directNeuralHelp');
 const { maybeExtractTextBetweenQuotes } = require('./utils');
 
 async function insertIndexPageInProjectStructure(project, settings, description) {
@@ -38,6 +38,7 @@ async function insertBasicIndexStyles(project, settings, description) {
         mainMessage: prompt,
         messages: []
     });
+    
     const pureAnswer = maybeExtractTextBetweenQuotes(modelAnswer);
 
     project[P_NAME] = {

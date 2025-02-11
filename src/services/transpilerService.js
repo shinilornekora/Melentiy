@@ -1,5 +1,6 @@
-const { transpilerFile: _transpilerScript } = require('../utils/scripts/code');
-const directNeuralHelp = require('../utils/models/yandex/directNeuralHelp');
+const { transpilerFile: _transpilerScript } = require('../llm/scripts/code');
+const directNeuralHelp = require('../llm/models/yandex/directNeuralHelp');
+const { maybeExtractTextBetweenQuotes } = require('./utils');
 
 async function insertTranspilerIntoProjectStructure(project, settings) {
     const { DEPS, P_NAME } = settings;
@@ -17,7 +18,7 @@ async function insertTranspilerIntoProjectStructure(project, settings) {
 
     project[P_NAME] = {
         ...project[P_NAME],
-        '.babelrc': babelFileRes
+        '.babelrc': maybeExtractTextBetweenQuotes(babelFileRes)
     };
 
     return project;

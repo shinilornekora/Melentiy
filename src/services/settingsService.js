@@ -4,8 +4,8 @@ const {
     deps: _depsScript,
     settings: _settingsScript,
     bundler: _bundlerScript,
-} = require('../utils/scripts/settings');
-const directNeuralHelp = require('../utils/models/yandex/directNeuralHelp');
+} = require('../llm/scripts/settings');
+const directNeuralHelp = require('../llm/models/yandex/directNeuralHelp');
 
 async function getProjectMainSettings(description) {
     const mainSettingsScript = _settingsScript();

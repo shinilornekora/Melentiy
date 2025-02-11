@@ -1,5 +1,5 @@
-const { src: _srcScript } = require('../utils/scripts/structure');
-const directNeuralHelp = require('../utils/models/yandex/directNeuralHelp');
+const { src: _srcScript } = require('../llm/scripts/structure');
+const directNeuralHelp = require('../llm/models/yandex/directNeuralHelp');
 
 async function getProjectStructure(A_TYPE, DEPS) {
     const foldersScript = _srcScript(A_TYPE, DEPS);

@@ -1,5 +1,5 @@
-const { readmes: _readmesScript } = require('../utils/scripts/structure');
-const directNeuralHelp = require('../utils/models/yandex/directNeuralHelp');
+const { readmes: _readmesScript } = require('../llm/scripts/structure');
+const directNeuralHelp = require('../llm/models/yandex/directNeuralHelp');
 
 async function insertREADMEFilesInOuterFolders(structure, projectName) {
     if (!structure) {

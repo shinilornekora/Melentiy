@@ -1,7 +1,8 @@
-const { bundler: _bundlerScript } = require('../utils/scripts/settings');
-const { bundlerFile: _bundlerFileScript } = require('../utils/scripts/code');
-const directNeuralHelp = require('../utils/models/yandex/directNeuralHelp');
+const { bundler: _bundlerScript } = require('../llm/scripts/settings');
+const { bundlerFile: _bundlerFileScript } = require('../llm/scripts/code');
+const directNeuralHelp = require('../llm/models/yandex/directNeuralHelp');
 const { POSSIBLE_BUNDLERS, bundlerFileName } = require('../projectConfig');
+const { maybeExtractTextBetweenQuotes } = require('./utils');
 
 async function insertRelevantBundler(project, settings) {
     const { DEPS, P_NAME } = settings;
@@ -33,7 +34,7 @@ async function insertRelevantBundler(project, settings) {
 
     project[settings.P_NAME] = {
         ...project[settings.P_NAME],
-        [bundlerFileName[bundler]]: bundlerFileContent
+        [bundlerFileName[bundler]]: maybeExtractTextBetweenQuotes(bundlerFileContent)
     };
 
     return project;
