@@ -7,11 +7,11 @@ module.exports = function getIndexScript(htmlCode, dependencies, description) {
         ${ htmlCode }
 
         **Important Rules**:
-        1. You should write index JS file that will be more suitable for chosen dependencies.
-        2. Do not write something complex, this file is an entrypoint.
-        3. DO NOT WRITE ANYTHING EXCEPT JS CODE.
-        4. Take your time, think mor the code.
-        5. YOUR CODE SHOULD BE ABLE TO COMPILE VIA \`node index.js\` command
+        1. DO NOT WRITE ANYTHING EXCEPT JS CODE
+        2. KEEP IT SIMPLE, IT IS ENTRYPOINT (No more than 50 rows, EXCEPTION: NOT COUNTING STYLE TAG.)
+        3. TAKE YOUR TIME AND THINK FOR THE BEST CODE - ADD ENOUGH STYLES TO MAKE IT LOOK PRETTY.
+        4. DO NOT USE ANY OTHER DEPS THAN ${ JSON.stringify(dependencies) }
+        5. STYLE YOUR CODE SO YOU WILL HAVE NON-UGLY components.
         6. DO NOT PUT ANY MARKDOWN.
 
         **Special Notes**:
