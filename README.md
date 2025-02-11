@@ -36,3 +36,8 @@ There are a few rules about it:
 - Each project name should be listed on a separate line.
 - You must be the maintainer of the package.
 - If you are not the maintainer, the rules will be simplified—you will have the option to install one of the three most recent versions.
+
+## Remains for MVP
+- improve quality of bundler configs
+- patch bundler service - it should be able to run via `npm start` command after `npm install`.
+- patch transpiler service - it should have MINIMUM, not maximum
