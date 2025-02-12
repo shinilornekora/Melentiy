@@ -12,7 +12,7 @@ async function insertIndexPageInProjectStructure(project, settings, description)
     const indexPageScript = _indexPage(description, resolvedDeps, project);
     const modelAnswer = await directNeuralHelp({
         temperature: 0.6,
-        maxTokens: 1500,
+        maxTokens: 8000,
         mainMessage: indexPageScript,
         messages: []
     });
@@ -34,7 +34,7 @@ async function insertBasicIndexStyles(project, settings, description) {
     const prompt = _indexStyle(htmlCode, description);
     const modelAnswer = await directNeuralHelp({
         temperature: 0.6,
-        maxTokens: 1500,
+        maxTokens: 8000,
         mainMessage: prompt,
         messages: []
     });
@@ -59,15 +59,19 @@ async function insertIndexJSFile(project, settings, description) {
     const prompt = _indexScript(htmlCode, resolvedDeps, description);
     const modelAnswer = await directNeuralHelp({
         temperature: 0.6,
-        maxTokens: 1500,
+        maxTokens: 8000,
         mainMessage: prompt,
         messages: []
     });
+    
     const pureAnswer = maybeExtractTextBetweenQuotes(modelAnswer);
 
     project[P_NAME] = {
         ...project[P_NAME],
-        'index.js': pureAnswer
+        src: {
+            ...project[P_NAME].src,
+            'index.js': pureAnswer
+        }
     };
 
     return project;

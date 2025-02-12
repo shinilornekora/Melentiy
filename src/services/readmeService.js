@@ -17,7 +17,7 @@ async function insertREADMEFilesInOuterFolders(structure, projectName) {
         const description = _readmesScript(folderName, subfolders);
         return await directNeuralHelp({
             temperature: 0.6,
-            maxTokens: 1500,
+            maxTokens: 8000,
             mainMessage: description,
             messages: []
         });

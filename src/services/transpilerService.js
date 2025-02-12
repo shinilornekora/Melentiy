@@ -8,7 +8,7 @@ async function insertTranspilerIntoProjectStructure(project, settings) {
 
     const babelFileRes = await directNeuralHelp({
         temperature: 0.6,
-        maxTokens: 1500,
+        maxTokens: 8000,
         mainMessage: transpilerScript,
         messages: []
     });

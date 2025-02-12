@@ -4,4 +4,5 @@ module.exports = {
     deps: require('./deps'),
     settings: require('./settings'),
     bundler: require('./bundler'),
+    improveDeps: require('./improveDeps'),
 }

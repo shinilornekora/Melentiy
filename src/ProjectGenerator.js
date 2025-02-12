@@ -1,4 +1,4 @@
-const { getProjectMainSettings, parseSettings } = require('./services/settingsService.js');
+const { getProjectMainSettings, parseSettings, improveDependencies } = require('./services/settingsService.js');
 const { getProjectStructure } = require('./services/structureService');
 const { insertREADMEFilesInOuterFolders } = require('./services/readmeService');
 const { insertRelevantBundler } = require('./services/bundlerService');
@@ -20,14 +20,18 @@ class ProjectGenerator {
     async getProjectSettings() {
         const rawSettings = await getProjectMainSettings(this.description);
         const settings = await parseSettings(rawSettings);
+        const finalSettings = await improveDependencies(settings, this.description);
+
         console.log('Settings were generated successfully.');
-        console.log(settings);
-        this.project.settings = settings;
+        console.log('Final settings: ', finalSettings);
+
+        this.project.settings = finalSettings;
     }
 
     async getProjectStructure() {
         const { A_TYPE, DEPS } = this.project.settings;
         this.project.structure = await getProjectStructure(A_TYPE, DEPS);
+
         console.log('Structure was generated successfully.');
         console.log(this.project.structure);
     }

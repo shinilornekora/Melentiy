@@ -10,7 +10,7 @@ async function insertRelevantBundler(project, settings) {
 
     const res = await directNeuralHelp({
         temperature: 0.6,
-        maxTokens: 1500,
+        maxTokens: 8000,
         mainMessage: bundlerScript,
         messages: []
     });
@@ -27,7 +27,7 @@ async function insertRelevantBundler(project, settings) {
     const bundlerFileScript = _bundlerFileScript(bundler, builderDeps);
     const bundlerFileContent = await directNeuralHelp({
         temperature: 0.6,
-        maxTokens: 1500,
+        maxTokens: 8000,
         mainMessage: bundlerFileScript,
         messages: []
     });

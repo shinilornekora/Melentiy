@@ -4,6 +4,7 @@ const {
     deps: _depsScript,
     settings: _settingsScript,
     bundler: _bundlerScript,
+    improveDeps: _depsImproveScript,
 } = require('../llm/scripts/settings');
 const directNeuralHelp = require('../llm/models/yandex/directNeuralHelp');
 
@@ -25,6 +26,7 @@ async function getProjectMainSettings(description) {
 
 async function parseSettings(rawSettings) {
     const finalSettings = {};
+
     try {
         rawSettings.split('\n')
             .filter(Boolean)
@@ -36,7 +38,27 @@ async function parseSettings(rawSettings) {
     } catch (err) {
         throw new Error('Failed to parse settings');
     }
+
+    console.log('Initial settings: ', finalSettings);
+
     return finalSettings;
 }
 
-module.exports = { getProjectMainSettings, parseSettings };
+async function improveDependencies(settings, description) {
+    const { DEPS } = settings;
+    const improveScript = _depsImproveScript(DEPS, description);
+
+    const newDeps = await directNeuralHelp({
+        temperature: 0.6,
+        maxTokens: 8000,
+        mainMessage: improveScript,
+    });
+
+    return { ...settings, DEPS: newDeps };
+}
+
+module.exports = { 
+    getProjectMainSettings, 
+    improveDependencies,
+    parseSettings, 
+};

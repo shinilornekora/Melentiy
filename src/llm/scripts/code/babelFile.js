@@ -12,5 +12,11 @@ module.exports = function getTranspilerFileScript(deps) {
         5. Try to NOT use any plugins if possible
         6. DO NOT PUT ANY MARKDOWN.
         7. DO NOT PUT ANY COMMENTS.
+        
+        **STRICT_RULE** 
+        
+        Do not use old version or old names of versions.
+        For example, "react" and "es2015" are deprecated presets.
+        They were renamed from Babel 7 to @babel/preset-* syntax.
     `;
 }

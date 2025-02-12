@@ -14,5 +14,11 @@ module.exports = function getBundlerFileScript(bundler, bundlerPlugins) {
 
         **Special Notes**:
         - Put a few comments to make it clear a little
+
+        **STRICT_RULE** 
+        
+        Do not put loaders in plugins section.
+        They are measured to MODULE section.
+        Also there's no any contentBase key - it was renamed to static.
     `;
 }
