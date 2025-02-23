@@ -16,10 +16,14 @@ async function insertTranspilerIntoProjectStructure(project, settings) {
     console.log('Babel structure was accomplished.');
     console.log(babelFileRes);
 
+    const maybeCleanedBabelFile = maybeExtractTextBetweenQuotes(babelFileRes)
+
     project[P_NAME] = {
         ...project[P_NAME],
-        '.babelrc': maybeExtractTextBetweenQuotes(babelFileRes)
+        '.babelrc': maybeCleanedBabelFile
     };
+
+    settings.transpilerDeps = JSON.parse(maybeCleanedBabelFile).presets;
 
     return project;
 }

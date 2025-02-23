@@ -66,11 +66,13 @@ async function insertIndexJSFile(project, settings, description) {
     
     const pureAnswer = maybeExtractTextBetweenQuotes(modelAnswer);
 
+    const indexFileName = pureAnswer.includes('react') ? 'index.jsx' : 'index.js';
+
     project[P_NAME] = {
         ...project[P_NAME],
         src: {
             ...project[P_NAME].src,
-            'index.js': pureAnswer
+            [indexFileName]: pureAnswer
         }
     };
 

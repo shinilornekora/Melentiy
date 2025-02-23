@@ -15,6 +15,8 @@ module.exports = function getProjectImprovedDepsScript(deps, description) {
         Maybe they need framework, maybe they don't.
         But if they are asking of certain dep, it's better to leave it.
 
+        !! DO NOT GIVE ME ANY SEARCH RESPONSES !!
+
         DESCRIPTION: ${ description }
     `;
 }

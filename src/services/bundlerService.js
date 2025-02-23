@@ -37,6 +37,8 @@ async function insertRelevantBundler(project, settings) {
         [bundlerFileName[bundler]]: maybeExtractTextBetweenQuotes(bundlerFileContent)
     };
 
+    settings.builder = bundler;
+
     return project;
 }
 

@@ -16,9 +16,12 @@ module.exports = function getBundlerFileScript(bundler, bundlerPlugins) {
         - Put a few comments to make it clear a little
 
         **STRICT_RULE** 
-        
         Do not put loaders in plugins section.
         They are measured to MODULE section.
         Also there's no any contentBase key - it was renamed to static.
+
+        **SPECIAL_RULE**
+        If you use webpack, don't forget to include html-webpack-plugin in webpack config.
+        index.html is located in ./public directory!!
     `;
 }

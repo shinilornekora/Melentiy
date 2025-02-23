@@ -1,7 +1,9 @@
-async function insertPackageJSONInProjectStructure(project, settings, description) {
-    const { DEPS, P_NAME } = settings;
-    const resolvedDeps = DEPS.split(',');
+const { BUILDER_CONFIG: builderConfig } = require('../projectConfig');
 
+async function insertPackageJSONInProjectStructure(project, settings, description) {
+    const { DEPS, P_NAME, builder, transpilerDeps } = settings;
+    const resolvedDeps = DEPS.split(',');
+    const resolvedDevDeps = {};
     const getLatestVersion = async (packageName) => {
         const exec = require('child_process').execSync;
         try {
@@ -17,7 +19,24 @@ async function insertPackageJSONInProjectStructure(project, settings, descriptio
     for (const dep of resolvedDeps) {
         const version = await getLatestVersion(dep.trim());
         if (version) {
-            dependencies[dep.trim()] = version;
+            dependencies[dep.trim().toLowerCase()] = version;
+        }
+    }
+
+    const mainBuilder = builderConfig[builder] ?? builderConfig['default'];
+    const { command, devDeps } = mainBuilder;
+
+    for (const devDep of [...devDeps, ...transpilerDeps]) {
+        let currentDep = devDep;
+
+        if (typeof devDep !== 'string') {
+            currentDep = currentDep[0];
+        }
+
+        const version = await getLatestVersion(currentDep.trim());
+        
+        if (version) {
+            resolvedDevDeps[currentDep.trim().toLowerCase()] = version;
         }
     }
 
@@ -26,11 +45,11 @@ async function insertPackageJSONInProjectStructure(project, settings, descriptio
         version: '1.0.0',
         description: description,
         scripts: {
-            start: 'nodemon -e js,css,html ./index.js'
+            start: command
         },
         dependencies,
         devDependencies: {
-            nodemon: '3.1.7'
+            ...resolvedDevDeps
         }
     };
 

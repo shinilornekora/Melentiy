@@ -5,6 +5,7 @@ const { insertRelevantBundler } = require('./services/bundlerService');
 const { insertTranspilerIntoProjectStructure } = require('./services/transpilerService');
 const { insertPackageJSONInProjectStructure } = require('./services/packageJsonService');
 const { createRealProjectStructure } = require('./services/fileSystemService');
+const { maybeExtractTextBetweenQuotes } = require('./services/utils.js');
 const { 
     insertIndexPageInProjectStructure, 
     insertBasicIndexStyles, 
@@ -19,8 +20,8 @@ class ProjectGenerator {
 
     async getProjectSettings() {
         const rawSettings = await getProjectMainSettings(this.description);
-        const settings = await parseSettings(rawSettings);
-        const finalSettings = await improveDependencies(settings, this.description);
+        const parsedSettings = await parseSettings(maybeExtractTextBetweenQuotes(rawSettings));
+        const finalSettings = await improveDependencies(parsedSettings, this.description);
 
         console.log('Settings were generated successfully.');
         console.log('Final settings: ', finalSettings);
