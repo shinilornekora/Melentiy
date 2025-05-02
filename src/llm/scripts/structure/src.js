@@ -61,11 +61,14 @@ const generateHints = (archType) => {
     return hints[archType] || '';
 };
 
-module.exports = function getProjectNameScript(archType, deps) {
+module.exports = function getProjectSrcScript(archType, deps) {
     return `
         <GOAL>Generate a folder structure for a SRC FOLDER in FRONTEND project implementing "${archType} architecture".</GOAL>
         ${ generateRequirements(archType, deps) }
-        <REQUIREMENT> Use keys as folder or file names. If the key represents a folder, the value must be an array. If the key represents a file, the value must be an empty string (""). </REQUIREMENT>
+        <REQUIREMENT> 
+        Use keys as folder or file names. If the key represents a folder, 
+        the value must be an array. If the key represents a file, the value must be an empty string (""). 
+        </REQUIREMENT>
         ${ generateHints(archType) }
     `;
 }
