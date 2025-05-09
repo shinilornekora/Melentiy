@@ -1,5 +1,6 @@
 # DEPENDENCIES
 node_modules
+dist
 
 # SECRET FILES
 /src/infrastructure/llm/models/yandex/secrets/__api.txt
