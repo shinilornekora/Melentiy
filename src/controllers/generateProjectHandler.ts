@@ -1,11 +1,16 @@
+import { Request, Response } from 'express';
 import { ProjectGenerator } from "../domain/ProjectGenerator";
 import { sendErrorResponse } from "./utils/sendErrorResponse";
 import { Handler } from "../index";
 
+interface GenerateProjectRequestBody {
+    description: string;
+}
+
 export const generateProjectHandler: Handler = {
     method: 'post',
     path: '/generate',
-    action: async (req: any, res: any) => {
+    action: async (req: Request<{}, {}, GenerateProjectRequestBody>, res: Response) => {
         const { description } = req.body;
 
         try {

@@ -1,6 +1,7 @@
 import { getProjectSrcScript as _srcScript } from '../../infrastructure/llm/scripts/structure';
 import { directNeuralHelp } from '../../infrastructure/llm/models/directNeuralHelp';
-import {Settings} from "../ProjectGenerator";
+
+import {Settings} from "../types";
 
 export async function getProjectStructure({ A_TYPE, DEPS }: Settings) {
     const foldersScript = _srcScript({ archType: A_TYPE, deps: DEPS });

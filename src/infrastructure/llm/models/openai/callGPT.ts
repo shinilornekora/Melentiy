@@ -1,4 +1,4 @@
-import {Message} from "../../../../domain/ProjectGenerator";
+import {Message} from "../../../../domain/types";
 
 type Props = {
     temperature: number;

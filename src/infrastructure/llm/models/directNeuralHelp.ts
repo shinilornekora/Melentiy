@@ -1,5 +1,6 @@
 import { callAlice } from "./yandex/callAlice";
-import {Message} from "../../../domain/ProjectGenerator";
+
+import {Message} from "../../../domain/types";
 
 // Пока что хардкодим.
 // Потом можно будет давать выбор модели.
@@ -15,7 +16,13 @@ type Props = {
 export async function directNeuralHelp(args: Props) {
     switch(MODEL_NAME) {
         case "yandex":
-            return await callAlice(args);
+            const answer = await callAlice(args);
+
+            if (!answer) {
+                throw new Error('Alice didn\'t find answer.')
+            }
+
+            return answer;
     }
 }
 

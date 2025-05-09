@@ -2,10 +2,14 @@ import path from 'path';
 
 import { promises as fs } from 'fs';
 import { BASE_PATH } from '../projectConfig';
-import { Project } from "../ProjectGenerator";
+
+import {Project} from "../types";
+
+type ReadmeSectorType = { readme?: string }
+type StructureReadmeSectorType = Record<string, ReadmeSectorType>;
 
 export async function createRealProjectStructure(structure: Project['structure'], basePath = BASE_PATH) {
-    for (const [key, value] of Object.entries<{ readme: string }>(structure)) {
+    for (const [key, value] of Object.entries<ReadmeSectorType>(structure as StructureReadmeSectorType)) {
         const currentPath = path.join(basePath, key);
 
         // Не может не быть значения - заканчиваем поиск

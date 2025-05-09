@@ -1,15 +1,21 @@
 import { getReadmesScript as _readmesScript } from '../../infrastructure/llm/scripts/structure';
 import { directNeuralHelp } from '../../infrastructure/llm/models/directNeuralHelp';
-import {Project} from "../ProjectGenerator";
 
-export async function insertREADMEFilesInOuterFolders(structure: Project['structure'], projectName: string) {
+import {Structure} from "../types";
+
+type Props = {
+    structure: Structure;
+    projectName: string;
+}
+
+export async function insertREADMEFilesInOuterFolders({ structure, projectName }: Props) {
     if (!structure) {
         throw new Error('Structure of the src folder wasn\'t finished.');
     }
 
     // Если структура обёрнута в ключ src, используем его
     if (structure.src) {
-        structure = structure.src;
+        structure = <Structure>structure['src'];
     }
 
     const readmeContents = {} as { [key: string]: string };
@@ -24,7 +30,7 @@ export async function insertREADMEFilesInOuterFolders(structure: Project['struct
         });
     };
 
-    for (const [folderName, subfolders] of Object.entries<string[]>(structure)) {
+    for (const [folderName, subfolders] of Object.entries<string[]>(structure as Record<string, string[]>)) {
         readmeContents[folderName] = await generateFolderReadme(folderName, subfolders);
     }
 
@@ -34,7 +40,7 @@ export async function insertREADMEFilesInOuterFolders(structure: Project['struct
             readme: readmeContents[key] || 'No README provided.'
         };
         return acc;
-    }, {} as Record<string, { files: any, readme: string }>);
+    }, {} as Record<string, { files: Structure | string | string[], readme: string }>);
 
     console.log('README.md-s were inserted successfully.');
     console.log(mergedStructure);

@@ -1,5 +1,7 @@
+import { Response } from "express";
+
 type Props = {
-    res: any;
+    res: Response;
     statusCode: number;
     message: string;
     errorDetails: string[] | null;

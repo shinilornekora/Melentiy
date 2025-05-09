@@ -1,40 +1,17 @@
-import { getProjectMainSettings, parseSettings, improveDependencies } from './services/settingsService.js';
-import { getProjectStructure } from './services/structureService';
-import { insertREADMEFilesInOuterFolders } from './services/readmeService';
-import { insertRelevantBundler } from './services/bundlerService';
-import { insertTranspilerIntoProjectStructure } from './services/transpilerService';
-import { insertPackageJSONInProjectStructure } from './services/packageJsonService';
-import { createRealProjectStructure } from './services/fileSystemService';
-import { maybeExtractTextBetweenQuotes } from './services/utils.js';
+import {getProjectMainSettings, improveDependencies, parseSettings} from './services/settingsService.js';
+import {getProjectStructure} from './services/structureService';
+import {insertREADMEFilesInOuterFolders} from './services/readmeService';
+import {insertRelevantBundler} from './services/bundlerService';
+import {insertTranspilerIntoProjectStructure} from './services/transpilerService';
+import {insertPackageJSONInProjectStructure} from './services/packageJsonService';
+import {createRealProjectStructure} from './services/fileSystemService';
+import {maybeExtractTextBetweenQuotes} from './services/utils.js';
 import {
-    insertIndexPageInProjectStructure, 
-    insertBasicIndexStyles, 
+    insertBasicIndexStyles,
     insertIndexJSFile,
+    insertIndexPageInProjectStructure,
 } from './services/indexFilesService';
-
-export type ARCH_TYPE = 'fsd' | 'module' | 'microfronts' | 'clean' | 'ddd';
-
-export type Message = {
-    role: string,
-    text: string
-};
-
-export type Settings = {
-    A_TYPE: ARCH_TYPE;
-    P_NAME: string;
-    DEPS: string;
-    builder: 'webpack' | 'rollup' | 'vite';
-    transpilerDeps: string[];
-}
-
-export type Project = {
-    // Тип мало того что рекурсивный, так еще и динамический.
-    // На любую попытку индексировать тип чем-то кроме отведенных полей будем возвращать структуру
-    // Вот только тип ее будет сложноват, пока что поставлю any.
-    [key: string]: any;
-    settings: Settings;
-    structure: any;
-}
+import { Project } from "./types";
 
 export class ProjectGenerator {
     private readonly description: string;
@@ -47,6 +24,11 @@ export class ProjectGenerator {
 
     async getProjectSettings() {
         const rawSettings = await getProjectMainSettings(this.description);
+
+        if (!rawSettings) {
+            throw new Error('Raw settings were NOT processed. Operation aborted.')
+        }
+
         const parsedSettings = await parseSettings(maybeExtractTextBetweenQuotes(rawSettings));
         const finalSettings = await improveDependencies(parsedSettings, this.description);
 
@@ -68,15 +50,18 @@ export class ProjectGenerator {
         await this.getProjectStructure();
     }
 
-    async getAbstractProjectTree() {
-        const { P_NAME } = this.project.settings;
-        this.project.structure = await insertREADMEFilesInOuterFolders(this.project.structure, P_NAME);
-        this.project.structure = await insertTranspilerIntoProjectStructure({ project: this.project.structure, settings: this.project.settings });
-        this.project.structure = await insertRelevantBundler(this.project.structure, this.project.settings);
-        this.project.structure = await insertPackageJSONInProjectStructure(this.project.structure, this.project.settings, this.description);
-        this.project.structure = await insertIndexPageInProjectStructure(this.project.structure, this.project.settings, this.description);
-        this.project.structure = await insertBasicIndexStyles(this.project.structure, this.project.settings, this.description);
-        this.project.structure = await insertIndexJSFile(this.project.structure, this.project.settings, this.description);
+    async getAbstractProjectTree(){
+        const settings = this.project.settings;
+        const structure = this.project.structure;
+        const description = this.description;
+
+        this.project.structure = await insertREADMEFilesInOuterFolders({ structure, projectName: settings.P_NAME });
+        this.project.structure = await insertTranspilerIntoProjectStructure({ structure, settings });
+        this.project.structure = await insertRelevantBundler({ structure, settings });
+        this.project.structure = await insertPackageJSONInProjectStructure({ structure, settings, description });
+        this.project.structure = await insertIndexPageInProjectStructure({ structure, settings, description });
+        this.project.structure = await insertBasicIndexStyles({ structure, settings, description });
+        this.project.structure = await insertIndexJSFile({ structure, settings, description });
     }
 
     async build() {

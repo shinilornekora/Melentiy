@@ -1,15 +1,20 @@
-import { getRelevantBundler as _bundlerScript } from '../../infrastructure/llm/scripts/settings';
-import { getBundlerFileScript as _bundlerFileScript } from '../../infrastructure/llm/scripts/code';
-import { directNeuralHelp } from '../../infrastructure/llm/models/directNeuralHelp';
-import { POSSIBLE_BUNDLERS, bundlerFileName } from '../projectConfig';
-import { maybeExtractTextBetweenQuotes } from './utils';
-import { Project, Settings } from "../ProjectGenerator";
+import {getRelevantBundler as _bundlerScript} from '../../infrastructure/llm/scripts/settings';
+import {getBundlerFileScript as _bundlerFileScript} from '../../infrastructure/llm/scripts/code';
+import {directNeuralHelp} from '../../infrastructure/llm/models/directNeuralHelp';
+import {bundlerFileName, POSSIBLE_BUNDLERS} from '../projectConfig';
+import {maybeExtractTextBetweenQuotes} from './utils';
 
-type BundlerType = 'webpack' | 'rollup' | 'vite';
+import {BundlerType, Settings, Structure} from "../types";
 
-export async function insertRelevantBundler(project: Project, settings: Settings) {
-    const { DEPS, P_NAME } = settings;
+type Props = {
+    structure: Structure;
+    settings: Settings;
+}
+
+export async function insertRelevantBundler({ structure, settings }: Props) {
+    const { DEPS } = settings;
     const bundlerScript = _bundlerScript({ deps: DEPS });
+    const projectStructure = structure[settings.P_NAME] as Structure;
 
     const res = await directNeuralHelp({
         temperature: 0.6,
@@ -41,12 +46,12 @@ export async function insertRelevantBundler(project: Project, settings: Settings
         messages: []
     });
 
-    project[settings.P_NAME] = {
-        ...project[settings.P_NAME],
+    structure[settings.P_NAME] = {
+        ...projectStructure,
         [bundlerFileName[bundler]]: maybeExtractTextBetweenQuotes(bundlerFileContent)
     };
 
     settings.builder = bundler;
 
-    return project;
+    return structure;
 }

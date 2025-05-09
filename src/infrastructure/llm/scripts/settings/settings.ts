@@ -1,8 +1,8 @@
 export function getAllSettings() {
     return `
         MAIN SETTINGS FOR PROJECT. 
-        DO NOT USE ANY EXPLICIT WORDS.
-        DO NOT USE ANY MARKDOWN!!
+        DO NOT USE EXPLICIT WORDS.
+        DO NOT USE MARKDOWN!!
 
         FINAL ANSWER TEMPLATE: 
 

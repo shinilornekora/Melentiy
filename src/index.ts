@@ -1,4 +1,6 @@
+import { Request, Response } from "express";
 import express from 'express';
+
 import { urlencoded } from "body-parser";
 import { generateProjectHandler } from "./controllers/generateProjectHandler";
 import { indexHandler } from "./controllers/indexHandler";
@@ -9,7 +11,7 @@ const server = express();
 export type Handler = {
     method: 'post' | 'get';
     path: string;
-    action: (req: any, res: any) => Promise<void>;
+    action: (req: Request, res: Response) => Promise<void>;
 }
 
 const controllers: Handler[] = [

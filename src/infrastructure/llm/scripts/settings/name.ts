@@ -9,7 +9,7 @@ export function getProjectNameScript({ description }: Props) {
         The name must be written in **camelCase** and **in English**.
         Please ensure the name is clear, concise, and reflective of the project's purpose.
 
-        Only the project name should be returned. Do not include any extra text, explanations, or punctuation.
+        Only the project name should be returned. Do not include extra text, explanations, or punctuation.
 
         **ANSWER FORMAT**:
         P_NAME: <generatedProjectNameInCamelCase>

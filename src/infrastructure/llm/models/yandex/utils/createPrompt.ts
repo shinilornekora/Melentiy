@@ -1,4 +1,4 @@
-import {Message} from "../../../../../domain/ProjectGenerator";
+import {Message} from "../../../../../domain/types";
 
 type Props = {
     mainMessage: string;
@@ -21,11 +21,11 @@ export function createPrompt({ mainMessage, messages, temperature, maxTokens, mo
                 role: 'system',
                 text: `
                     You are the model which knows everything about frontend. 
-                    No markdown or any emotions.
+                    No markdown or emotions.
                     Your answers must be 100% correct.
                     Reanalyze the answer if you are not sure about it.
                     All your answers must be in English.
-                    No any explicit politeness, just pure answers.
+                    No explicit politeness, just pure answers.
                 `
             },
             { role: 'user', text: mainMessage },

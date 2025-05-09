@@ -5,15 +5,24 @@ import {
 } from '../../infrastructure/llm/scripts/code';
 import { directNeuralHelp } from '../../infrastructure/llm/models/directNeuralHelp';
 import { maybeExtractTextBetweenQuotes } from './utils';
-import { Project, Settings } from "../ProjectGenerator";
 
-export async function insertIndexPageInProjectStructure(project: Project, settings: Settings, description: string) {
+import {Project, Settings, Structure} from "../types";
+
+type Props = {
+    structure: Structure;
+    settings: Settings;
+    description: string;
+}
+
+export async function insertIndexPageInProjectStructure({ structure, settings, description }: Props) {
     const { DEPS, P_NAME } = settings;
+    const projectStructure = structure[P_NAME] as Structure;
+    const publicProjectSector = projectStructure['public'] as Structure;
     const resolvedDeps = DEPS.split(',');
     const indexPageScript = _indexPage({
         description,
         dependencies: resolvedDeps,
-        structure: project
+        structure: structure
     });
 
     const modelAnswer = await directNeuralHelp({
@@ -24,19 +33,27 @@ export async function insertIndexPageInProjectStructure(project: Project, settin
     });
     const pureAnswer = maybeExtractTextBetweenQuotes(modelAnswer);
 
-    project[P_NAME] = {
-        ...project[P_NAME],
+    if (typeof structure[P_NAME] !== 'object') {
+        throw new Error('Invalid abstract tree data - root is not an object.');
+    }
+
+    structure[P_NAME] = {
+        ...projectStructure,
         public: {
+            ...publicProjectSector,
             'index.html': pureAnswer
         }
     };
 
-    return project;
+    return structure;
 }
 
-export async function insertBasicIndexStyles(project: Project, settings: Settings, description: string) {
+export async function insertBasicIndexStyles({ structure, settings, description }: Props) {
     const { P_NAME } = settings;
-    const htmlCode = project[P_NAME].public['index.html'];
+    const projectStructure = structure[P_NAME] as Structure;
+    const publicProjectSector = projectStructure['public'] as Structure;
+    const htmlCode = publicProjectSector['index.html'] as string;
+
     const prompt = _indexStyle({ htmlCode, description });
     const modelAnswer = await directNeuralHelp({
         temperature: 0.6,
@@ -47,21 +64,29 @@ export async function insertBasicIndexStyles(project: Project, settings: Setting
     
     const pureAnswer = maybeExtractTextBetweenQuotes(modelAnswer);
 
-    project[P_NAME] = {
-        ...project[P_NAME],
+    if (typeof structure[P_NAME] !== 'object') {
+        throw new Error('Invalid abstract tree data - root is not an object.');
+    }
+
+    structure[P_NAME] = {
+        ...projectStructure,
         public: {
-            ...project[P_NAME].public,
+            ...publicProjectSector,
             'styles.css': pureAnswer
         }
     };
 
-    return project;
+    return structure;
 }
 
-export async function insertIndexJSFile(project: Project, settings: Settings, description: string) {
+export async function insertIndexJSFile({ structure, settings, description }: Props) {
     const { DEPS, P_NAME } = settings;
     const resolvedDeps = DEPS.split(',');
-    const htmlCode = project[P_NAME].public['index.html'];
+
+    const projectStructure = structure[P_NAME] as Structure;
+    const publicProjectSector = projectStructure['public'] as Structure;
+    const htmlCode = publicProjectSector['index.html'] as string;
+
     const prompt = _indexScript({
         htmlCode,
         description ,
@@ -78,13 +103,17 @@ export async function insertIndexJSFile(project: Project, settings: Settings, de
 
     const indexFileName = pureAnswer.includes('react') ? 'index.jsx' : 'index.ts';
 
-    project[P_NAME] = {
-        ...project[P_NAME],
+    if (typeof structure[P_NAME] !== 'object') {
+        throw new Error('Invalid abstract tree data - root is not an object.');
+    }
+
+    structure[P_NAME] = {
+        ...projectStructure,
         src: {
-            ...project[P_NAME].src,
+            ...publicProjectSector,
             [indexFileName]: pureAnswer
         }
     };
 
-    return project;
+    return structure;
 }

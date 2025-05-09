@@ -6,7 +6,8 @@ import {
     getAllSettings as _settingsScript,
 } from '../../infrastructure/llm/scripts/settings';
 import { directNeuralHelp } from '../../infrastructure/llm/models/directNeuralHelp';
-import {ARCH_TYPE, Settings} from "../ProjectGenerator";
+
+import {ARCH_TYPE, Settings} from "../types";
 
 export async function getProjectMainSettings(description: string) {
     const mainSettingsScript = _settingsScript();
@@ -65,6 +66,10 @@ export async function improveDependencies(settings: Settings, description: strin
         mainMessage: improveScript,
         messages: []
     });
+
+    if (!newDeps) {
+        throw new Error('Failed to improve deps');
+    }
 
     return { ...settings, DEPS: newDeps };
 }

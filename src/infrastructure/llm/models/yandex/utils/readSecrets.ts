@@ -12,7 +12,7 @@ export async function readSecrets({ secretPath }: Props) {
         ]);
         return { API_KEY, CATALOG_KEY };
     } catch (error) {
-        throw new Error('Error reading secrets.');
+        console.log('Error reading secrets.');
         console.error(error);
     }
 }

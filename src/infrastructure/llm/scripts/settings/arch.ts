@@ -23,7 +23,7 @@ export function getProjectArchScript({ description }: Props) {
         - A_TYPE: 1, - Microfronts suits the need for multiple teams to manage separate parts of the UI independently.
 
         This is the second settings JSON field.
-        **NO ANY EXPLICIT TEXT IN RESPONSE. JUST A NUMBER THAT MEANS THE CERTAIN ARCHITECTURE TYPE.**
+        **NO EXPLICIT TEXT IN RESPONSE. JUST A NUMBER THAT MEANS THE CERTAIN ARCHITECTURE TYPE.**
 
 
         IDEA: ${description}

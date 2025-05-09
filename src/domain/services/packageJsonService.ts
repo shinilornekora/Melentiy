@@ -1,9 +1,17 @@
 import { BUILDER_CONFIG as builderConfig } from '../projectConfig';
 import { execSync as exec } from "child_process";
-import {Project, Settings} from "../ProjectGenerator";
 
-export async function insertPackageJSONInProjectStructure(project: Project, settings: Settings, description: string) {
+import {Project, Settings, Structure} from "../types";
+
+type Props = {
+    structure: Structure;
+    settings: Settings;
+    description: string;
+}
+
+export async function insertPackageJSONInProjectStructure({ structure, settings, description }: Props) {
     const { DEPS, P_NAME, builder, transpilerDeps } = settings;
+    const projectStructure = structure[P_NAME] as Structure;
     const resolvedDeps = DEPS.split(',');
     const resolvedDevDeps: Record<string, string> = {};
     const getLatestVersion = async (packageName: string) => {
@@ -54,11 +62,11 @@ export async function insertPackageJSONInProjectStructure(project: Project, sett
         }
     };
 
-    project[P_NAME] = {
-        ...project[P_NAME],
-        'package.json': JSON.stringify(packageJsonContent)
+    structure[P_NAME] = {
+        ...projectStructure,
+        'package.json': JSON.stringify(packageJsonContent, null, 2)
     };
 
-    return project;
+    return structure;
 }
 

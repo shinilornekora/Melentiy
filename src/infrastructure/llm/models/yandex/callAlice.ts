@@ -2,7 +2,8 @@ import { extractAliceAnswer } from './utils/extractGPTAnswer';
 import { createRequestHeaders } from './utils/createRequestHeaders';
 import { readSecrets } from './utils/readSecrets';
 import { createPrompt } from './utils/createPrompt';
-import {Message} from "../../../../domain/ProjectGenerator";
+
+import {Message} from "../../../../domain/types";
 
 const SECRET_PATH = './secrets';
 const SOURCE_URL = "https://llm.api.cloud.yandex.net/foundationModels/v1/completion";
@@ -22,7 +23,14 @@ export async function callAlice({
     messages = []
 }: Props) {
     try {
-        const { API_KEY: apiKey, CATALOG_KEY: catalogKey } = await readSecrets({ secretPath: SECRET_PATH });
+        const secrets = await readSecrets({ secretPath: SECRET_PATH });
+
+        if (!secrets) {
+            console.error('Secrets cannot be accessed! Operation aborted.');
+            return;
+        }
+
+        const { API_KEY: apiKey, CATALOG_KEY: catalogKey } = secrets;
         const modelURI = GET_MODEL_URI(catalogKey);
         const headers = createRequestHeaders({ apiKey, catalogKey });
         const prompt = createPrompt({ mainMessage, messages, temperature, maxTokens, modelURI });

@@ -14,7 +14,7 @@ export function getBundlerFileScript({ bundler, bundlerPlugins }: Props) {
         3. You ALWAYS should use syntax of the latest bundler version.
         4. DO NOT WRITE ANYTHING EXCEPT JS CODE.
         5. Take your time, think more for the code.
-        6. DO NOT PUT ANY MARKDOWN.
+        6. DO NOT PUT MARKDOWN.
         7. If you see that the dependency is a loader, USE IT LIKE A LOADER! NOT PLUGIN!
 
         **Special Notes**:
@@ -23,7 +23,7 @@ export function getBundlerFileScript({ bundler, bundlerPlugins }: Props) {
         **STRICT_RULE** 
         Do not put loaders in plugins section.
         They are measured to MODULE section.
-        Also there's no any contentBase key - it was renamed to static.
+        Also there's no contentBase key - it was renamed to static.
 
         **SPECIAL_RULE**
         If you use webpack, don't forget to include html-webpack-plugin in webpack config.

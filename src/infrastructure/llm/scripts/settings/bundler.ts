@@ -20,6 +20,6 @@ export function getRelevantBundler({ deps }: Props) {
         - webpack: chunks-webpack-plugin,html-webpack-plugin
         - vite: @vitejs/plugin-vue,@vitejs/plugin-vue-jsx
 
-        **NO ANY EXPLICIT TEXT IN RESPONSE.**
+        **NO EXPLICIT TEXT IN RESPONSE.**
     `;
 }

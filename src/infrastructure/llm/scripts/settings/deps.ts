@@ -14,7 +14,7 @@ export function getProjectDepsScript({ description }: Props) {
            DEPS: <dep1>, <dep2>, <dep3>, ...
         4. Feel free to add as many additional dependencies as necessary based on the complexity and needs of the project.
         5. Avoid including unnecessary libraries that do not contribute to the project described.
-        6. Do not include any text or explanation except the formatted dependency string.
+        6. Do not include text or explanation except the formatted dependency string.
         7. Project has to have 3-12 initial deps. Always try to make more, though.
 
         **Special Notes**:

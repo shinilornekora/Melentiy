@@ -1,15 +1,17 @@
 import { getTranspilerFileScript as _transpilerScript } from '../../infrastructure/llm/scripts/code';
 import { directNeuralHelp } from '../../infrastructure/llm/models/directNeuralHelp';
 import { maybeExtractTextBetweenQuotes } from './utils';
-import { Project, Settings } from "../ProjectGenerator";
+
+import {Settings, Structure} from "../types";
 
 type Props = {
-    project: Project;
+    structure: Structure;
     settings: Settings
 }
 
-export async function insertTranspilerIntoProjectStructure({ project, settings }: Props) {
+export async function insertTranspilerIntoProjectStructure({ structure, settings }: Props) {
     const { DEPS, P_NAME } = settings;
+    const projectStructure = structure[P_NAME] as Structure;
     const transpilerScript = _transpilerScript({ deps: DEPS });
 
     const babelFileRes = await directNeuralHelp({
@@ -24,12 +26,12 @@ export async function insertTranspilerIntoProjectStructure({ project, settings }
 
     const maybeCleanedBabelFile = maybeExtractTextBetweenQuotes(babelFileRes)
 
-    project[P_NAME] = {
-        ...project[P_NAME],
+    structure[P_NAME] = {
+        ...projectStructure,
         '.babelrc': maybeCleanedBabelFile
     };
 
     settings.transpilerDeps = JSON.parse(maybeCleanedBabelFile).presets;
 
-    return project;
+    return structure;
 }

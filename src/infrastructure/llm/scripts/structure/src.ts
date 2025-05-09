@@ -1,4 +1,4 @@
-import {ARCH_TYPE} from "../../../../domain/ProjectGenerator";
+import {ARCH_TYPE} from "../../../../domain/types";
 
 type Props = {
     archType: ARCH_TYPE;

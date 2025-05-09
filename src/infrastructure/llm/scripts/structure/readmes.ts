@@ -11,8 +11,8 @@ export const getReadmesScript = ({ folderName, subfolders }: Props) => `
 
     The README should include:
     - A short description of the folder's purpose.
-    - Explanation of what each subfolder (if any) is for.
-    - Any other relevant details that would help a developer understand the contents and purpose of the folder.
+    - Explanation of what each subfolder is made for.
+    - Other relevant details that would help a developer understand the contents and purpose of the folder.
 
     Please write the README in a clear and concise manner, following standard README conventions.
 `;

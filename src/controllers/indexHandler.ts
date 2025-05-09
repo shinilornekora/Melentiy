@@ -1,11 +1,12 @@
-import {promises as fs} from "fs";
-import {sendErrorResponse} from "./utils/sendErrorResponse";
-import {Handler} from "../index";
+import { Request, Response } from "express";
+import { promises as fs } from "fs";
+import { sendErrorResponse } from "./utils/sendErrorResponse";
+import { Handler } from "../index";
 
 export const indexHandler: Handler = {
     method: 'get',
     path: '/',
-    action: async (req: any, res: any) => {
+    action: async (req: Request, res: Response) => {
         try {
             const data = await fs.readFile('./resources/index.html');
 
