@@ -2,19 +2,25 @@
   "name": "melentiy",
   "version": "1.0.0",
   "description": "A useful tool for frontenders.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "nodemon -e js,css,html ./index.js",
-    "start:prestable": "node ./index.js"
+    "start": "nodemon -e js,css,html ./dist/index.js",
+    "start:prestable": "node ./dist/index.js",
+    "build": "tsc"
   },
   "author": "Shiniasse",
   "license": "ISC",
   "dependencies": {
-    "child_process": "^1.0.2",
+    "@types/node": "^22.15.17",
+    "body-parser": "2.2.0",
+    "child_process": "1.0.2",
     "express": "4.21.1",
     "fs": "0.0.1-security"
   },
   "devDependencies": {
-    "nodemon": "3.1.7"
+    "@types/body-parser": "^1.19.5",
+    "@types/express": "^5.0.1",
+    "nodemon": "3.1.7",
+    "typescript": "5.8.3"
   }
 }

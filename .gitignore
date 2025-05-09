@@ -2,5 +2,5 @@
 node_modules
 
 # SECRET FILES
-/src/secrets/__api.txt
-/src/secrets/__catalog.txt
+/src/infrastructure/llm/models/yandex/secrets/__api.txt
+/src/infrastructure/llm/models/yandex/secrets/__catalog.txt
