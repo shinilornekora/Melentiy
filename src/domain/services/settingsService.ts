@@ -51,8 +51,6 @@ export async function parseSettings(rawSettings: string) {
         throw new Error('Failed to parse settings');
     }
 
-    console.log('Initial settings: ', finalSettings);
-
     return finalSettings;
 }
 

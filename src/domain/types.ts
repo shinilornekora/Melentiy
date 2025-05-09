@@ -33,11 +33,6 @@ export interface Structure {
 }
 
 export type Project = {
-    /**
-     * Пока заглушка.
-     * Нужно избавиться от кейсов где так обращаться вообще можно.
-     */
-    [key: string]: Structure;
     settings: Settings;
-    structure: Structure | Project;
+    structure: Structure;
 }

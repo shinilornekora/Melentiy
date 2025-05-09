@@ -67,6 +67,8 @@ export async function insertPackageJSONInProjectStructure({ structure, settings,
         'package.json': JSON.stringify(packageJsonContent, null, 2)
     };
 
+    console.log(' -- Package.json was inserted successfully --');
+
     return structure;
 }
 

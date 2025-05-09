@@ -53,5 +53,7 @@ export async function insertRelevantBundler({ structure, settings }: Props) {
 
     settings.builder = bundler;
 
+    console.log(` -- Bundler was chosen - ${bundler} -- `);
+
     return structure;
 }

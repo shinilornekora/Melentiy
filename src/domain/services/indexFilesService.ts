@@ -45,6 +45,8 @@ export async function insertIndexPageInProjectStructure({ structure, settings, d
         }
     };
 
+    console.log(' -- Index page was inserted successfully -- ');
+
     return structure;
 }
 
@@ -76,6 +78,8 @@ export async function insertBasicIndexStyles({ structure, settings, description 
         }
     };
 
+    console.log(' -- Index style was inserted successfully --');
+
     return structure;
 }
 
@@ -85,6 +89,7 @@ export async function insertIndexJSFile({ structure, settings, description }: Pr
 
     const projectStructure = structure[P_NAME] as Structure;
     const publicProjectSector = projectStructure['public'] as Structure;
+    const srcProjectSector = projectStructure['src'] as Structure;
     const htmlCode = publicProjectSector['index.html'] as string;
 
     const prompt = _indexScript({
@@ -110,10 +115,12 @@ export async function insertIndexJSFile({ structure, settings, description }: Pr
     structure[P_NAME] = {
         ...projectStructure,
         src: {
-            ...publicProjectSector,
+            ...srcProjectSector as Structure,
             [indexFileName]: pureAnswer
         }
     };
+
+    console.log(' -- Index script was inserted successfully --');
 
     return structure;
 }

@@ -21,8 +21,7 @@ export async function insertTranspilerIntoProjectStructure({ structure, settings
         messages: []
     });
 
-    console.log('Babel structure was accomplished.');
-    console.log(babelFileRes);
+    console.log(' -- Transpiler configuration was inserted successfully -- ');
 
     const maybeCleanedBabelFile = maybeExtractTextBetweenQuotes(babelFileRes)
 
