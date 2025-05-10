@@ -1,17 +1,18 @@
-import {getProjectMainSettings, improveDependencies, parseSettings} from './services/settingsService.js';
-import {getProjectStructure} from './services/structureService';
-import {insertREADMEFilesInOuterFolders} from './services/readmeService';
-import {insertRelevantBundler} from './services/bundlerService';
-import {insertTranspilerIntoProjectStructure} from './services/transpilerService';
-import {insertPackageJSONInProjectStructure} from './services/packageJsonService';
-import {createRealProjectStructure} from './services/fileSystemService';
-import {maybeExtractTextBetweenQuotes} from './services/utils.js';
+import { getProjectMainSettings, improveDependencies, parseSettings } from './services/settingsService.js';
+import { getProjectStructure } from './services/structureService';
+import { insertREADMEFilesInOuterFolders } from './services/readmeService';
+import { insertRelevantBundler } from './services/bundlerService';
+import { insertTranspilerIntoProjectStructure } from './services/transpilerService';
+import { insertPackageJSONInProjectStructure } from './services/packageJsonService';
+import { createRealProjectStructure } from './services/fileSystemService';
+import { maybeExtractTextBetweenQuotes } from './services/utils.js';
 import {
     insertBasicIndexStyles,
     insertIndexJSFile,
     insertIndexPageInProjectStructure,
 } from './services/indexFilesService';
-import {Project, Structure} from "./types";
+import { Project } from "./types";
+import { validateBundleFile, validateIndexFile } from "./services/validateService";
 
 const initialProjectState = {
     settings: {
@@ -120,6 +121,15 @@ export class ProjectGenerator {
      */
     async validateAbstractProjectTree() {
         console.log('[PHASE 4] Starting the process of project tree validation');
+        this.project.structure = await validateIndexFile({
+            structure: this.project.structure,
+            settings: this.project.settings,
+        })
+        // Анализируем - правильно ли написали html - вдруг подключили лишние скрипты
+        this.project.structure = await validateBundleFile({
+            structure: this.project.structure,
+            settings: this.project.settings,
+        })
         console.log('[PHASE 4] Ending the process of project tree validation');
     }
 

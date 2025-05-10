@@ -20,6 +20,8 @@ export function getIndexPageScript({ description, dependencies, structure }: Pro
         5. YOU ALWAYS HAVE ACCESS ONLY TO \`styles.css\` STYLES FILE. Do NOT add other of them in html code.
         5. Try to analyze script tags you lay in HTML. Maybe you don't need them. Think for 5 more seconds about it.
         6. Don't be hasty, take your time.
+        7. DO NOT INCLUDE ANY script TAGS!
+        8. If you have framework DO NOT ADD ANY EXPLICIT HTML IT WILL BE CONTROLLED BY FRAMEWORK!
 
         **Special Notes**:
         - It is better to leave comments at specific HTML parts (head or main section at least)

@@ -1,29 +1,35 @@
 type Props = {
     htmlCode: string;
     description: string;
-    dependencies: unknown;
+    dependencies: string[];
 }
 
 export function getIndexScript({ htmlCode, dependencies, description }: Props) {
     return `
-        Your task is to write JS code for index file of the js app.
-        Dependencies of the project: ${ JSON.stringify(dependencies) }
-        HTML code of the index page: 
-        
-        ${ htmlCode }
-
-        **Important Rules**:
-        1. DO NOT WRITE ANYTHING EXCEPT JS CODE
-        2. KEEP IT SIMPLE, IT IS ENTRYPOINT (No more than 50 rows, EXCEPTION: NOT COUNTING STYLE TAG.)
-        3. TAKE YOUR TIME AND THINK FOR THE BEST CODE - ADD ENOUGH STYLES TO MAKE IT LOOK PRETTY.
-        4. DO NOT USE OTHER DEPS THAN ${ JSON.stringify(dependencies) }
-        5. STYLE YOUR CODE SO YOU WILL HAVE NON-UGLY components.
-        6. DO NOT PUT MARKDOWN.
-
-        **Special Notes**:
-        - Put a few comments to make it clear a little
-
-        **Project Description**:
+        Your task is to produce ONLY JavaScript code for the "index.js" file of a simple application which relies on a globally loaded library (e.g., "Vue" as a global variable if needed).
+    
+        Requirements:
+        1. Use ONLY these dependencies: ${JSON.stringify(dependencies)}.
+           • Assume the main library is already loaded globally (do not import or require anything else).
+        2. DO NOT mention or use any bundlers/build steps.
+        3. If the library supports a function like createApp, use it instead of older patterns (like new Something(...)).
+        4. Keep the code under 50 lines.
+        5. Output MUST be JavaScript code ONLY (no HTML, no extra text).
+        6. You may include minimal styling in the script, but do NOT use libraries not listed in ${JSON.stringify(dependencies)}.
+        7. Make sure ALL variables you reference are defined.
+    
+        Provided HTML code (the index page where this JS will run):
+        --------------------------------------------------------------------------
+        ${htmlCode}
+        --------------------------------------------------------------------------
+    
+        Project description:
         "${description}"
+    
+        Notes:
+        - Keep it simple (entry point).
+        - Add a few comments where helpful.
+        - Do not exceed 50 lines total.
+        - Output ONLY the JS code.
     `;
 }

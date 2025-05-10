@@ -106,7 +106,7 @@ export async function insertIndexJSFile({ structure, settings, description }: Pr
     
     const pureAnswer = maybeExtractTextBetweenQuotes(modelAnswer);
 
-    const indexFileName = pureAnswer.includes('react') ? 'index.jsx' : 'index.ts';
+    const indexFileName = pureAnswer.includes('react') ? 'index.jsx' : 'index.js';
 
     if (typeof structure[P_NAME] !== 'object') {
         throw new Error('Invalid abstract tree data - root is not an object.');

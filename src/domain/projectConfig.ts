@@ -21,7 +21,7 @@ export const BUILDER_CONFIG = {
         devDeps: [ 'rollup-plugin-serve', 'rollup-plugin-livereload' ]
     },
     default: {
-        command: 'nodemon -e js,css,html ./src/index.ts',
+        command: 'nodemon -e js,css,html ./src/index.js',
         devDeps: [ 'nodemon' ]
     }
 };

@@ -29,10 +29,14 @@ export async function insertRelevantBundler({ structure, settings }: Props) {
         throw new Error("Invalid builder data! Expected - 2, got - " + rawBuilderConfig.length);
     }
 
-    const [bundler, builderDeps = ''] = rawBuilderConfig as [BundlerType, string];
+    let [bundler, builderDeps = ''] = rawBuilderConfig as [BundlerType, string];
 
     if (!POSSIBLE_BUNDLERS.includes(bundler)) {
         throw new Error('Invalid bundler was chosen.');
+    }
+
+    if (bundler === 'webpack') {
+        builderDeps += ',webpack-cli';
     }
 
     // Обновляем зависимости для package.json

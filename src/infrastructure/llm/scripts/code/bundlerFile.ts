@@ -1,32 +1,25 @@
 type Props = {
     bundler: string;
     bundlerPlugins: string;
-}
+};
 
 export function getBundlerFileScript({ bundler, bundlerPlugins }: Props) {
     return `
-        Your task is to write JS code for bundler ${bundler} file of the js app.
-        Plugins of the config file: ${ bundlerPlugins }
-
-        **Important Rules**:
-        1. You should write this file in JS language.
-        2. All plugins should be used. DO NOT USE PLUGINS OTHER THAN ${ bundlerPlugins }
-        3. You ALWAYS should use syntax of the latest bundler version.
-        4. DO NOT WRITE ANYTHING EXCEPT JS CODE.
-        5. Take your time, think more for the code.
-        6. DO NOT PUT MARKDOWN.
-        7. If you see that the dependency is a loader, USE IT LIKE A LOADER! NOT PLUGIN!
-
-        **Special Notes**:
-        - Put a few comments to make it clear a little
-
-        **STRICT_RULE** 
-        Do not put loaders in plugins section.
-        They are measured to MODULE section.
-        Also there's no contentBase key - it was renamed to static.
-
-        **SPECIAL_RULE**
-        If you use webpack, don't forget to include html-webpack-plugin in webpack config.
-        index.html is located in ./public directory!!
+        Your task: write a JS config file for the ${bundler} bundler in a JavaScript application.
+        The config file must include the following plugins: ${bundlerPlugins}.
+    
+        Rules:
+        1. Output ONLY JavaScript code (no markdown, no extra text).
+        2. Use ALL plugins listed above. Do not add plugins beyond ${bundlerPlugins}.
+        3. Always apply the latest ${bundler} syntax.
+        4. Remember to define the entrypoint for the application.
+        5. If something is a loader (not a plugin), put it under the module/rules section.
+        6. contentBase has been renamed to static (use it accordingly).
+        7. For Webpack, include html-webpack-plugin, and note index.html is in ./public.
+        
+        Notes:
+        • Add a few comments for clarity.
+        • DO NOT write anything besides the JS config.
+        • Keep loaders and plugins separated correctly.
     `;
 }
