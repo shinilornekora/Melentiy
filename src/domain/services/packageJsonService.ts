@@ -18,8 +18,10 @@ export async function insertPackageJSONInProjectStructure({ structure, settings,
         try {
             return exec(`npm show ${packageName} version`).toString().trim();
         } catch (error) {
+            // Нейросеть попыталась скормить нам несуществующую библиотеку.
+            // Скорее всего она пришла нам из района сборщиков
             console.error(`Error fetching version for ${packageName}`);
-            console.error(error);
+            return undefined;
         }
     };
 
@@ -29,6 +31,8 @@ export async function insertPackageJSONInProjectStructure({ structure, settings,
         const version = await getLatestVersion(dep.trim());
         if (version) {
             dependencies[dep.trim().toLowerCase()] = version;
+        } else {
+            dependencies[dep.trim().toLowerCase()] = '1.0.0-NON-RESOLVED'
         }
     }
 

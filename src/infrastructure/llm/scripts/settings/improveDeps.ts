@@ -6,7 +6,7 @@ type Props = {
 export function getProjectImprovedDepsScript({ deps, description }: Props) {
     return `
         Your task is to analyze the given stack of dependencies to check if it is good for current frontend applications.
-        Main goal - search for the deps that can be dropped due to deprecation or invalide combination.
+        Main goal - search for the deps that can be dropped due to deprecation or invalid combination.
         List of deps: "${ deps }"
 
         **Important Rules**:

@@ -83,6 +83,28 @@ export async function insertBasicIndexStyles({ structure, settings, description 
     return structure;
 }
 
+function getIndexFileName(scriptContent: string) {
+    const isTS = scriptContent.includes('interface') || scriptContent.includes('type');
+
+    if (scriptContent.includes('react')) {
+        if (isTS) {
+            return 'index.tsx';
+        }
+
+        return 'index.jsx';
+    }
+
+    if (scriptContent.includes('vue')) {
+        return 'index.vue'
+    }
+
+    if (scriptContent.includes('interface ') || scriptContent.includes('type ')) {
+        return 'index.ts'
+    }
+
+    return 'index.js';
+}
+
 export async function insertIndexJSFile({ structure, settings, description }: Props) {
     const { DEPS, P_NAME } = settings;
     const resolvedDeps = DEPS.split(',');
@@ -105,8 +127,7 @@ export async function insertIndexJSFile({ structure, settings, description }: Pr
     });
     
     const pureAnswer = maybeExtractTextBetweenQuotes(modelAnswer);
-
-    const indexFileName = pureAnswer.includes('react') ? 'index.jsx' : 'index.js';
+    const indexFileName = getIndexFileName(pureAnswer);
 
     if (typeof structure[P_NAME] !== 'object') {
         throw new Error('Invalid abstract tree data - root is not an object.');

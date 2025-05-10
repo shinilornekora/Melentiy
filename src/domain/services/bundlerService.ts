@@ -35,8 +35,12 @@ export async function insertRelevantBundler({ structure, settings }: Props) {
         throw new Error('Invalid bundler was chosen.');
     }
 
+    // Сейчас у GPT есть сложности с сборщиками.
+    // Во многом потому что плагины для них из кастомных репозиториев
+    // Из-за этого мы постоянно получаем несуществующие библиотеки
+    // Пусть дефолтные для вебпака будут определены, вдруг он их не засунет.
     if (bundler === 'webpack') {
-        builderDeps += ',webpack-cli';
+        builderDeps += ',webpack-cli, babel-loader';
     }
 
     // Обновляем зависимости для package.json
