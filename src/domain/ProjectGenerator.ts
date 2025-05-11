@@ -121,11 +121,14 @@ export class ProjectGenerator {
      */
     async validateAbstractProjectTree() {
         console.log('[PHASE 4] Starting the process of project tree validation');
-        this.project.structure = await validateIndexFile({
-            structure: this.project.structure,
-            settings: this.project.settings,
-        })
-        // Анализируем - правильно ли написали html - вдруг подключили лишние скрипты
+        for (let i = 0; i <= 5; i++) {
+            this.project.structure = await validateIndexFile({
+                structure: this.project.structure,
+                settings: this.project.settings,
+            });
+        }
+        console.log(`-- Validated index script file --`);
+
         this.project.structure = await validateBundleFile({
             structure: this.project.structure,
             settings: this.project.settings,

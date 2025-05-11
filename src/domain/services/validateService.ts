@@ -13,32 +13,27 @@ type Props = {
 export const validateIndexFile = async ({ structure, settings }: Props) => {
     const { DEPS, P_NAME } = settings;
     const projectStructure = structure[P_NAME] as Structure;
-    const scriptedProjectStructure = JSON.stringify(projectStructure);
     const scriptFolder = projectStructure.src as Structure;
+    const indexFileName = Object
+        .keys(scriptFolder)
+        .find(filename => filename.startsWith('index')) as string;
 
     const improveIndexScriptFileScript = indexJSFileScript();
     const depsScript = `DEPENDENCIES: ${DEPS}`;
-    const structureScript = `STRUCTURE: ${scriptedProjectStructure}`;
     const basicScripts = [
         depsScript,
-        structureScript
+        scriptFolder[indexFileName] as string
     ].map(script => ({ role: 'user', text: script }));
 
     const modelAnswer = await directNeuralHelp({
-        temperature: 0.6,
+        temperature: 0.3,
         maxTokens: 8000,
         mainMessage: improveIndexScriptFileScript,
         messages: basicScripts,
     })
 
     const pureAnswer = maybeExtractTextBetweenQuotes(modelAnswer);
-    const indexFileName = Object
-        .keys(scriptFolder)
-        .find(filename => filename.startsWith('index')) as string;
-
     const scriptFileWasChanged = pureAnswer !== scriptFolder[indexFileName];
-
-    console.log(`-- Validated index script file [${scriptFileWasChanged ? 'WAS_CHANGED' : 'NO_CHANGES'}] --`);
 
     if (scriptFileWasChanged) {
         return {
@@ -69,7 +64,7 @@ export const validateBundleFile = async ({ structure, settings }: Props) => {
     ].map(script => ({ role: 'user', text: script }));
 
     const modelAnswer = await directNeuralHelp({
-        temperature: 0.6,
+        temperature: 0.3,
         maxTokens: 8000,
         mainMessage: improveBundleFileScript,
         messages: basicScripts,

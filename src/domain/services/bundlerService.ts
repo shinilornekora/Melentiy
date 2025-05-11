@@ -48,7 +48,7 @@ export async function insertRelevantBundler({ structure, settings }: Props) {
 
     const bundlerFileScript = _bundlerFileScript({ bundler, bundlerPlugins: builderDeps });
     const bundlerFileContent = await directNeuralHelp({
-        temperature: 0.6,
+        temperature: 0.3,
         maxTokens: 8000,
         mainMessage: bundlerFileScript,
         messages: []

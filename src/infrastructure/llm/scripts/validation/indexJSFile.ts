@@ -1,18 +1,20 @@
 export const indexJSFileScript = () => {
     return `
-    You are a frontend expert. Your task is to validate and possibly improve the main index JS script in the application
-    so that the project can run via "npm start".
-
-    <STRICT_REQUIREMENT>Remove any imports referencing dependencies that are not in the project's dependency list.</STRICT_REQUIREMENT>
-    <STRICT_REQUIREMENT>Remove any imports pointing to non-existent files.</STRICT_REQUIREMENT>
-    <STRICT_REQUIREMENT>Remove all unused imports.</STRICT_REQUIREMENT>
-    <STRICT_REQUIREMENT>If no changes are needed after these checks, do NOT modify the file.</STRICT_REQUIREMENT>
-    
-    You will be given the abstract project structure.
-    Review the code in <project_name>/src/index.* and make any necessary corrections.
-
-    Output ONLY the improved index file code, with no extra text or explanation.
-    The index file MUST NOT contain any bundler-specific logic.
-    DO NOT remove imports that are actually in use.
+        I have a JavaScript file with some issues.
+        It is the index script - root of the project, so it should be runnable.
+        
+        Please follow these steps:  
+        1. Read the JS code I provide below.  
+        2. Carefully find any mistakes, errors, or problems in the code, such as:  
+            - Syntax errors  
+            - Logical mistakes 
+            - UNDEFINED VARIABLES
+            - Missing or misplaced brackets, semicolons, or parentheses  
+            - Variable or function problems  
+            - Anything else that would cause the code not to work  
+        3. Fix all issues you find so the code will run correctly.  
+        
+        You need to return only the code that you improved.
+        No explicit responses.
   `;
 };

@@ -15,7 +15,7 @@ export async function insertTranspilerIntoProjectStructure({ structure, settings
     const transpilerScript = _transpilerScript({ deps: DEPS });
 
     const babelFileRes = await directNeuralHelp({
-        temperature: 0.6,
+        temperature: 0.2,
         maxTokens: 8000,
         mainMessage: transpilerScript,
         messages: []

@@ -26,7 +26,7 @@ export async function insertIndexPageInProjectStructure({ structure, settings, d
     });
 
     const modelAnswer = await directNeuralHelp({
-        temperature: 0.6,
+        temperature: 0.3,
         maxTokens: 8000,
         mainMessage: indexPageScript,
         messages: []
@@ -58,7 +58,7 @@ export async function insertBasicIndexStyles({ structure, settings, description 
 
     const prompt = _indexStyle({ htmlCode, description });
     const modelAnswer = await directNeuralHelp({
-        temperature: 0.6,
+        temperature: 0.3,
         maxTokens: 8000,
         mainMessage: prompt,
         messages: []
@@ -120,7 +120,7 @@ export async function insertIndexJSFile({ structure, settings, description }: Pr
         dependencies: resolvedDeps,
     });
     const modelAnswer = await directNeuralHelp({
-        temperature: 0.6,
+        temperature: 0.3,
         maxTokens: 8000,
         mainMessage: prompt,
         messages: []
