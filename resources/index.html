@@ -9,6 +9,24 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Montserrat:wght@200;400;700&display=swap">
 </head>
 <body>
+    <!-- Пока генерируется каркас, пользователь может расслабиться -->
+    <div id="si-popup" class="spaceinvaders-popup" style="display:none;">
+        <div class="si-popup-inner glass">
+            <button class="si-exit">&times;</button>
+            <div class="si-dialog" id="si-dialog" tabindex="0">
+                <h2>Сыграем в Space Invaders, пока ждёте?</h2>
+                <div class="si-dialog__actions">
+                    <button id="si-play" class="actionButton">Сыграть</button>
+                    <button id="si-cancel" class="actionButton glass">Нет, спасибо</button>
+                </div>
+            </div>
+            <canvas id="spaceInvadersCanvas" width="340" height="450" style="display:none; margin: 0 auto; border-radius: 8px;"></canvas>
+            <div id="si-over" style="display:none; text-align:center; margin-top:1em;">
+                <span style="font-size:1.2em;">Игра окончена! Ваш счет: <span id="si-score"></span></span><br>
+                <button id="si-close" class="actionButton">Закрыть</button>
+            </div>
+        </div>
+    </div>
     <div class="bg-blob"></div>
     <div class="bg-blob second"></div>
     <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
@@ -57,30 +75,6 @@
             © 2024 Melentiy workbench. Crafted like a piece of art.
         </footer>
     </main>
-    <script>
-        // Animated placeholder
-        const txt = "Write your beautiful theme there...";
-        let iter = 0;
-        const ta = document.getElementById('projectDescription');
-        function animatedPlaceholder() {
-            ta.placeholder = txt.substring(0, iter) + (iter % 2 ? '|' : '');
-            iter = (iter + 1) % (txt.length + 1);
-            setTimeout(animatedPlaceholder, 75);
-        }
-        animatedPlaceholder();
-
-        // Smooth show on page load
-        window.addEventListener("DOMContentLoaded", function() {
-            document.body.classList.add("loaded");
-        });
-
-        // Close textarea border animation
-        ta.addEventListener('focus', function() {
-            this.parentNode.querySelector('.textarea-border-anim').classList.add('active');
-        });
-        ta.addEventListener('blur', function() {
-            this.parentNode.querySelector('.textarea-border-anim').classList.remove('active');
-        });
-    </script>
+    <script src="index.js"></script>
 </body>
 </html>
