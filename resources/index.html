@@ -1,21 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="styles.css">
-        <title>Melentiy workbench</title>
-    </head>
-    <body>
-        <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
-        <main class="wrapper">
-            <header class="title">
-                What will we build today?
-            </header>
-            <section class="subtitle">
-                Choose your project topic, highlight the things do you want to add into you project (maybe, animations, or any specific frameworks, ...etc)
-            </section>
-            <form method="post" action="/generate" class="wrapper" target="dummyframe">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Melentiy workbench</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Montserrat:wght@200;400;700&display=swap">
+</head>
+<body>
+    <div class="bg-blob"></div>
+    <div class="bg-blob second"></div>
+    <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+    <main class="wrapper glass">
+        <header class="title neon-glow" tabindex="0">
+            What will we build today?
+        </header>
+        <section class="subtitle glass fade-in">
+            Choose your project topic.<br>
+            Highlight things you want to add (animations, frameworks, etc).
+        </section>
+        <form method="post" action="/generate" class="form glass" target="dummyframe" autocomplete="off">
+            <div class="textarea-wrapper">
                 <textarea 
                     id="projectDescription"
                     placeholder="Write your beautiful theme there..."
@@ -23,19 +29,58 @@
                     class="topic"
                     title="write the project description"
                     aria-label="write the project description"
+                    maxlength="2000"
+                    spellcheck="true"
                 ></textarea>
-                <input 
-                    type="submit" 
-                    class="actionButton" 
-                    value="Generate!" 
-                    title="generate a project"
-                    aria-label="generate a project"
-                />
-            </form>
-            <details class="details">
-                <summary>Here's a good template of writing the description of your idea!</summary>
-                <p><b>I want to create project for ..., it must have frameworks/libraries like ..., it mustn't have utilities like ..., the app will cover ... of users. </b></p>
-            </details>
-        </main>    
-    </body>
+                <span class="textarea-border-anim"></span>
+            </div>
+            <input 
+                type="submit" 
+                class="actionButton"
+                value="Generate!" 
+                title="generate a project"
+                aria-label="generate a project"
+            />
+        </form>
+        <details class="details glass slide-in">
+            <summary><span class="neon">Here's a good template for your idea!</span></summary>
+            <p>
+                <b>
+                    I want to create project for <mark>...</mark>, <br>
+                    it must have frameworks/libraries like <mark>...</mark>,<br>
+                    it mustn't have utilities like <mark>...</mark>,<br>
+                    the app will cover <mark>...</mark> of users.
+                </b>
+            </p>
+        </details>
+        <footer class="footer glass">
+            © 2024 Melentiy workbench. Crafted like a piece of art.
+        </footer>
+    </main>
+    <script>
+        // Animated placeholder
+        const txt = "Write your beautiful theme there...";
+        let iter = 0;
+        const ta = document.getElementById('projectDescription');
+        function animatedPlaceholder() {
+            ta.placeholder = txt.substring(0, iter) + (iter % 2 ? '|' : '');
+            iter = (iter + 1) % (txt.length + 1);
+            setTimeout(animatedPlaceholder, 75);
+        }
+        animatedPlaceholder();
+
+        // Smooth show on page load
+        window.addEventListener("DOMContentLoaded", function() {
+            document.body.classList.add("loaded");
+        });
+
+        // Close textarea border animation
+        ta.addEventListener('focus', function() {
+            this.parentNode.querySelector('.textarea-border-anim').classList.add('active');
+        });
+        ta.addEventListener('blur', function() {
+            this.parentNode.querySelector('.textarea-border-anim').classList.remove('active');
+        });
+    </script>
+</body>
 </html>

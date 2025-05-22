@@ -18,7 +18,7 @@ export async function getProjectMainSettings(description: string) {
     ].map(script => ({ role: 'user', text: script }));
 
     return await directNeuralHelp({
-        temperature: 0.6,
+        temperature: 0.2,
         maxTokens: 8000,
         mainMessage: mainSettingsScript,
         messages: basicScripts

@@ -73,8 +73,8 @@ export const validateBundleFile = async ({ structure, settings }: Props) => {
     const pureAnswer = maybeExtractTextBetweenQuotes(modelAnswer);
     const fileWasChanged = pureAnswer !== projectStructure[bundlerCertainFileName];
 
-    console.log(`raw bundler - ${projectStructure[bundlerCertainFileName]}`);
-    console.log(`new bundler - ${pureAnswer}`)
+    // console.log(`raw bundler - ${projectStructure[bundlerCertainFileName]}`);
+    // console.log(`new bundler - ${pureAnswer}`)
 
     console.log(`-- Validated bundler file [${fileWasChanged ? 'WAS_CHANGED' : 'NO_CHANGES'}] --`);
 
