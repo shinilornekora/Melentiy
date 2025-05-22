@@ -572,3 +572,93 @@ textarea::-webkit-scrollbar-thumb:hover {
     box-shadow: 0 0 32px #00fff255;
     display: block;
 }
+
+.history-panel {
+    position: fixed;
+    top: 44px;
+    left: 0;
+    min-width: 56px;
+    width: 320px;
+    max-width: 85vw;
+    height: 78vh;
+    min-height: 248px;
+    z-index: 15;
+    border-radius: 0 18px 18px 0;
+    box-shadow: 3px 0 25px #3a008255;
+    transition: width 0.3s cubic-bezier(.5, .6, .23, 1), background 0.25s;
+    display: flex;
+    flex-direction: column;
+    background: rgba(24,24,44,0.73);
+    backdrop-filter: blur(6px);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.history-panel.closed {
+    width: 56px;
+    min-width: 56px;
+    box-shadow: none;
+}
+.history-title {
+    margin: 15px 0 10px 65px;
+    font-size: 1.18em;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: #97f0fa;
+    opacity: .98;
+    transition: opacity .2s;
+    user-select: none;
+}
+.history-panel.closed .history-title,
+.history-panel.closed .history-list {
+    opacity: 0;
+    pointer-events: none;
+}
+.history-toggle {
+    position: absolute;
+    left: 8px; top: 8px;
+    width: 36px; height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: #171847e0;
+    color: #7ae7e7;
+    font-size: 1.3em;
+    box-shadow: 0 2px 11px #81f7e299;
+    transition: background .19s;
+    cursor: pointer;
+    z-index: 2;
+    display: flex; align-items: center; justify-content: center;
+}
+.history-panel.closed .history-toggle {
+    left: 8px;
+}
+.history-list {
+    list-style: none;
+    padding: 1.35em 1.1em 1em 1.35em;
+    margin: 0;
+    overflow-y: auto;
+    transition: opacity .27s;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .97em;
+}
+.history-list li {
+    background: #1a224a60;
+    margin-bottom: 12px;
+    padding: 9px 14px 9px 10px;
+    border-radius: 8px;
+    color: #f9f9ff;
+    border-left: 3.6px solid #19f6fb;
+    font-size: .99em;
+    word-break: break-word;
+    box-shadow: 0 2px 12px #4aecfa18;
+    transition: background .2s;
+}
+.history-list li:last-child {
+    border-left-color: #e949f7;
+    background: #181929dd;
+    font-weight: 600;
+}
+@media (max-width:600px) {
+    .history-panel { width:90vw; left:0; top: 8px; min-height:120px;}
+}
