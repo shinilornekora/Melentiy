@@ -17,7 +17,7 @@ export const generateProjectHandler: Handler = {
             const generator = new ProjectGenerator(description);
             await generator.generateProject();
 
-            res.status(200).json({ message: 'Project generated successfully.' });
+            res.status(200).json({ message: 'Project generation ended.' });
         } catch (err) {
             console.error(err)
             sendErrorResponse({

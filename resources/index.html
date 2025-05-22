@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Montserrat:wght@200;400;700&display=swap">
 </head>
 <body>
-    <!-- Пока генерируется каркас, пользователь может расслабиться -->
     <div id="si-popup" class="spaceinvaders-popup" style="display:none;">
         <div class="si-popup-inner glass">
             <button class="si-exit">&times;</button>
@@ -25,6 +24,16 @@
                 <span style="font-size:1.2em;">Игра окончена! Ваш счет: <span id="si-score"></span></span><br>
                 <button id="si-close" class="actionButton">Закрыть</button>
             </div>
+        </div>
+    </div>
+    <div class="lang-switch" id="langSwitch" title="Change language / Сменить язык">
+        <button type="button" data-lang="ru" class="lang-switch__btn" id="langBtnRu">RU</button>
+        <button type="button" data-lang="en" class="lang-switch__btn" id="langBtnEn">EN</button>
+    </div>
+    <div id="generation-modal" class="generation-modal glass" style="display: none;">
+        <div class="generation-modal__body" id="generationModalBody">
+            <div class="generation-modal__spinner"></div>
+            <div class="generation-modal__desc" id="generationModalDesc">Генерируем проект...</div>
         </div>
     </div>
     <div id="history-panel" class="history-panel glass closed" aria-label="История генераций">
