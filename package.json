@@ -1,6 +1,6 @@
 {
   "name": "melentiy",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A useful tool for frontenders.",
   "main": "dist/index.js",
   "scripts": {
