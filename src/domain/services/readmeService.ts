@@ -45,7 +45,7 @@ export async function insertREADMEFilesInOuterFolders({ structure, projectName }
         return acc;
     }, {} as Record<string, ReadmeProcessedProps>);
 
-    console.log(' -- README.md-s were inserted successfully --');
+    console.log(' -- README_en.md-s were inserted successfully --');
 
     const returnValue: Structure = {
         ...structure,

@@ -21,7 +21,7 @@ export async function createRealProjectStructure(structure: Project['structure']
         if (typeof value === 'object' && !Array.isArray(value)) {
             await fs.mkdir(currentPath, { recursive: true });
             if (value.readme) {
-                await fs.writeFile(path.join(currentPath, 'README.md'), value.readme);
+                await fs.writeFile(path.join(currentPath, 'README_en.md'), value.readme);
             }
             await createRealProjectStructure(value, currentPath);
         }
