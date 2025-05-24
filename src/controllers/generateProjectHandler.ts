@@ -14,8 +14,17 @@ export const generateProjectHandler: Handler = {
         const { description } = req.body;
 
         try {
+            if (!description) {
+                res.status(400).json({ message: 'Project description required' });
+            }
+
             const generator = new ProjectGenerator(description);
-            await generator.generateProject();
+            const result = await generator.generateProject();
+
+            if (result === 'ERROR') {
+                res.status(417).json({ message: 'Project generation failed.' })
+                return;
+            }
 
             res.status(200).json({ message: 'Project generation ended.' });
         } catch (err) {

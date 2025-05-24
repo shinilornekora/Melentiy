@@ -32,7 +32,7 @@ export async function insertRelevantBundler({ structure, settings }: Props) {
     let [bundler, builderDeps = ''] = rawBuilderConfig as [BundlerType, string];
 
     if (!POSSIBLE_BUNDLERS.includes(bundler)) {
-        throw new Error('Invalid bundler was chosen.');
+        throw new Error('INVALID_BUNDLER_WAS_CHOSEN');
     }
 
     // Сейчас у GPT есть сложности с сборщиками.
@@ -53,6 +53,11 @@ export async function insertRelevantBundler({ structure, settings }: Props) {
         mainMessage: bundlerFileScript,
         messages: []
     });
+
+    // Отсекаем сразу бедный конфиг сборщика, проект точно не соберется
+    if (bundlerFileContent.length < 20) {
+        throw new Error('INVALID_BUNDLER_CONFIG');
+    }
 
     structure[settings.P_NAME] = {
         ...projectStructure,

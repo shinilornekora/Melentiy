@@ -39,7 +39,7 @@ export class ProjectGenerator {
         const rawSettings = await getProjectMainSettings(this.description);
 
         if (!rawSettings) {
-            throw new Error('Raw settings were NOT processed. Operation aborted.')
+            throw new Error('NO_RAW_SETTINGS_IN_RESPONSE')
         }
 
         const parsedSettings = await parseSettings(maybeExtractTextBetweenQuotes(rawSettings));
@@ -69,6 +69,13 @@ export class ProjectGenerator {
     async getProjectInitials() {
         await this.getProjectSettings();
         await this.getProjectStructure();
+
+        const checkIfSettingsAreEmpty = Object.values(this.project.settings).length === 0
+        const checkIfStructureIsEmpty = Object.values(this.project.structure).length === 0
+
+        if (checkIfSettingsAreEmpty || checkIfStructureIsEmpty) {
+            throw new Error('PROJECT_INITIALS_ARE_INCORRECT');
+        }
     }
 
     /**
@@ -138,25 +145,34 @@ export class ProjectGenerator {
 
     async convertAbstractTreeToRealFS() {
         console.log('[PHASE 5]: Staring the process of project tree convertation');
+
+        if (Object.values(this.project.settings).length === 0) {
+            throw new Error('CANNOT_CONVERT_EMPTY_STRUCTURE');
+        }
+
         await createRealProjectStructure(this.project.structure);
         console.log('[PHASE 6]: Ending the process of project tree convertation');
     }
 
     async build() {
+        console.log('\n[PHASE 1] Starting the process of project generator');
         await this.getProjectInitials();
         await this.getAbstractProjectTree();
         await this.validateAbstractProjectTree();
         await this.convertAbstractTreeToRealFS();
+        console.log('[LAST PHASE] All build steps were completed. Project was generated.');
     }
 
     async generateProject() {
         try {
-            console.log('\n[PHASE 1] Starting the process of project generator');
             await this.build();
-            console.log('[LAST PHASE] All build steps were completed. Project was generated.');
+
+            return 'OK';
         } catch (error) {
             console.log('[ERROR] Project was NOT generated.');
             console.error(error);
+
+            return 'ERROR';
         }
     }
 }
