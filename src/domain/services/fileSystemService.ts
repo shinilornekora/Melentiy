@@ -1,9 +1,9 @@
 import path from 'path';
 
 import { promises as fs } from 'fs';
-import { BASE_PATH } from '../projectConfig';
+import { BASE_PATH } from '../projectConfig.js';
 
-import {Project} from "../types";
+import { Project } from "../types.js";
 
 type ReadmeSectorType = { readme?: string }
 type StructureReadmeSectorType = Record<string, ReadmeSectorType>;

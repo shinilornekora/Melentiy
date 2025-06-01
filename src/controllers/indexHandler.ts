@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { promises as fs } from "fs";
-import { sendErrorResponse } from "./utils/sendErrorResponse";
-import { Handler } from "../index";
+import { sendErrorResponse } from "./utils/sendErrorResponse.js";
+import { Handler } from "../index.js";
 
 export const indexHandler: Handler = {
     method: 'get',

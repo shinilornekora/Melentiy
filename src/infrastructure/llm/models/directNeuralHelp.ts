@@ -1,6 +1,6 @@
-import { callAlice } from "./yandex/callAlice";
+import { callAlice } from "./yandex/callAlice.js";
 
-import {Message} from "../../../domain/types";
+import { Message } from "../../../domain/types.js";
 
 // Пока что хардкодим.
 // Потом можно будет давать выбор модели.

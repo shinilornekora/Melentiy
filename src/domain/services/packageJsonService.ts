@@ -1,7 +1,7 @@
-import { BUILDER_CONFIG as builderConfig } from '../projectConfig';
+import { BUILDER_CONFIG as builderConfig } from '../projectConfig.js';
 import { execSync as exec } from "child_process";
 
-import {Project, Settings, Structure} from "../types";
+import {Settings, Structure} from "../types.js";
 
 type Props = {
     structure: Structure;

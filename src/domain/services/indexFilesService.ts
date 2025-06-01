@@ -2,11 +2,11 @@ import {
     getIndexPageStylesScript as _indexStyle,
     getIndexPageScript as _indexPage,
     getIndexScript as _indexScript
-} from '../../infrastructure/llm/scripts/code';
-import { directNeuralHelp } from '../../infrastructure/llm/models/directNeuralHelp';
-import { maybeExtractTextBetweenQuotes } from './utils';
+} from '../../infrastructure/llm/scripts/code/index.js';
+import { directNeuralHelp } from '../../infrastructure/llm/models/directNeuralHelp.js';
+import { maybeExtractTextBetweenQuotes } from './utils.js';
 
-import {Project, Settings, Structure} from "../types";
+import {Project, Settings, Structure} from "../types.js";
 
 type Props = {
     structure: Structure;

@@ -1,9 +1,9 @@
-import { extractAliceAnswer } from './utils/extractGPTAnswer';
-import { createRequestHeaders } from './utils/createRequestHeaders';
-import { readSecrets } from './utils/readSecrets';
-import { createPrompt } from './utils/createPrompt';
+import { extractAliceAnswer } from './utils/extractGPTAnswer.js';
+import { createRequestHeaders } from './utils/createRequestHeaders.js';
+import { readSecrets } from './utils/readSecrets.js';
+import { createPrompt } from './utils/createPrompt.js';
 
-import {Message} from "../../../../domain/types";
+import { Message } from "../../../../domain/types.js";
 
 const SECRET_PATH = './secrets';
 const SOURCE_URL = "https://llm.api.cloud.yandex.net/foundationModels/v1/completion";
@@ -34,11 +34,12 @@ export async function callAlice({
         const modelURI = GET_MODEL_URI(catalogKey);
         const headers = createRequestHeaders({ apiKey, catalogKey });
         const prompt = createPrompt({ mainMessage, messages, temperature, maxTokens, modelURI });
+        const stringifyPrompt = JSON.stringify(prompt);
 
         const response = await fetch(SOURCE_URL, {
             method: 'POST',
             headers,
-            body: JSON.stringify(prompt)
+            body: stringifyPrompt,
         });
 
         if (!response.ok) {
@@ -69,6 +70,7 @@ export async function callAlice({
                 Body: ${rootCause}
                 WasBodyUsed: ${bodyUsed}
                 Redirected: ${redirected}
+                requestBody: ${stringifyPrompt}
             `);
         }
 

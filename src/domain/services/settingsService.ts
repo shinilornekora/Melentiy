@@ -4,10 +4,10 @@ import {
     getProjectDepsScript as _depsScript,
     getProjectImprovedDepsScript as _depsImproveScript,
     getAllSettings as _settingsScript,
-} from '../../infrastructure/llm/scripts/settings';
-import { directNeuralHelp } from '../../infrastructure/llm/models/directNeuralHelp';
+} from '../../infrastructure/llm/scripts/settings/index.js';
+import { directNeuralHelp } from '../../infrastructure/llm/models/directNeuralHelp.js';
 
-import {ARCH_TYPE, Settings} from "../types";
+import {ARCH_TYPE, Settings} from "../types.js";
 
 export async function getProjectMainSettings(description: string) {
     const mainSettingsScript = _settingsScript();

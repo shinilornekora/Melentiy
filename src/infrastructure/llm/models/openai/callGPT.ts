@@ -1,4 +1,4 @@
-import {Message} from "../../../../domain/types";
+import {Message} from "../../../../domain/types.js";
 
 type Props = {
     temperature: number;

@@ -1,15 +1,69 @@
 import { GameConfig } from "./GameConfig.js";
 
+interface Player {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    dx: number;
+}
+
+interface Shot {
+    x: number;
+    y: number;
+    vy: number;
+}
+
+interface Enemy {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    alive: boolean;
+}
+
 export class SpaceInvadersGame {
+    cvs: HTMLCanvasElement;
+    ctx: CanvasRenderingContext2D;
+    W: number;
+    H: number;
+    player: Player;
+    shots: Shot[];
+    enemyShots: Shot[];
+    enemies: Enemy[];
+    rows: number;
+    cols: number;
+    eW: number;
+    eH: number;
+    eGap: number;
+    enemyDx: number;
+    enemyDy: number;
+    enemySpeed: number;
+    enemyFrame: number;
+    dir: number;
+    score: number;
+    playing: boolean;
+    left: boolean;
+    right: boolean;
+    space: boolean;
+    canShoot: boolean;
+    gameLoopId: number | null;
+    keyDownHandler: (e: KeyboardEvent) => void;
+    keyUpHandler: (e: KeyboardEvent) => void;
 
     constructor() {
-        this.cvs = document.getElementById('spaceInvadersCanvas');
-        this.ctx = this.cvs.getContext('2d');
+        const canvas = document.getElementById('spaceInvadersCanvas') as HTMLCanvasElement | null;
+        if (!canvas) throw new Error('Canvas element not found');
+
+        this.cvs = canvas;
+        const context = this.cvs.getContext('2d');
+        if (!context) throw new Error('2D context not supported');
+
+        this.ctx = context;
         this.cvs.style.display = 'block';
         this.W = this.cvs.width;
         this.H = this.cvs.height;
 
-        // Состояния
         this.player = {
             x: this.W / 2 - GameConfig.PLAYER_WIDTH / 2,
             y: this.H - 38,
@@ -29,7 +83,6 @@ export class SpaceInvadersGame {
         this.enemyDy = GameConfig.ENEMY_DY_INITIAL;
         this.enemySpeed = GameConfig.ENEMY_SPEED_INITIAL;
         this.enemyFrame = 0;
-        // сокращение от direction
         this.dir = 1;
         this.score = 0;
         this.playing = true;
@@ -37,8 +90,10 @@ export class SpaceInvadersGame {
         this.right = false;
         this.space = false;
         this.canShoot = true;
-
         this.gameLoopId = null;
+
+        this.keyDownHandler = (e: KeyboardEvent) => this.key(e, true);
+        this.keyUpHandler = (e: KeyboardEvent) => this.key(e, false);
 
         this.bindEvents();
 
@@ -49,19 +104,17 @@ export class SpaceInvadersGame {
         this.gameLoop();
     }
 
-    bindEvents() {
-        this.keyDownHandler = e => this.key(e, true);
-        this.keyUpHandler   = e => this.key(e, false);
+    bindEvents(): void {
         window.addEventListener('keydown', this.keyDownHandler);
-        window.addEventListener('keyup',   this.keyUpHandler);
+        window.addEventListener('keyup', this.keyUpHandler);
     }
 
-    unbindEvents() {
+    unbindEvents(): void {
         window.removeEventListener('keydown', this.keyDownHandler);
-        window.removeEventListener('keyup',   this.keyUpHandler);
+        window.removeEventListener('keyup', this.keyUpHandler);
     }
 
-    resetEnemies() {
+    resetEnemies(): void {
         this.enemies = [];
         for (let rowIndex = 0; rowIndex < this.rows; rowIndex++) {
             for (let colIndex = 0; colIndex < this.cols; colIndex++) {
@@ -78,20 +131,18 @@ export class SpaceInvadersGame {
         }
     }
 
-    key(e, d) {
+    key(e: KeyboardEvent, d: boolean): void {
         if (e.code === 'ArrowLeft' || e.code === 'KeyA') {
             this.left = d;
-        }
-        else if (e.code === 'ArrowRight' || e.code === 'KeyD') {
+        } else if (e.code === 'ArrowRight' || e.code === 'KeyD') {
             this.right = d;
-        }
-        else if (e.code === 'Space') {
+        } else if (e.code === 'Space') {
             this.space = d;
         }
         e.preventDefault();
     }
 
-    drawPlayer() {
+    drawPlayer(): void {
         const p = this.player;
         const ctx = this.ctx;
 
@@ -106,12 +157,13 @@ export class SpaceInvadersGame {
         ctx.restore();
     }
 
-    drawEnemy(e) {
+    drawEnemy(e: Enemy): void {
         const ctx = this.ctx;
 
         ctx.save();
         ctx.fillStyle = GameConfig.ENEMY_COLOR;
         ctx.beginPath();
+        // @ts-ignore: roundRect is not in all Canvas types, but is present in all modern browsers
         ctx.roundRect(e.x, e.y, e.w, e.h, GameConfig.ENEMY_CORNER_RADIUS);
         ctx.shadowColor = GameConfig.ENEMY_SHADOW_COLOR;
         ctx.shadowBlur = GameConfig.ENEMY_SHADOW_BLUR;
@@ -133,7 +185,7 @@ export class SpaceInvadersGame {
         ctx.fill();
     }
 
-    render() {
+    render(): void {
         const ctx = this.ctx;
         ctx.clearRect(0, 0, this.W, this.H);
 
@@ -168,7 +220,7 @@ export class SpaceInvadersGame {
         ctx.restore();
     }
 
-    update() {
+    update(): void {
         // === Игрок ===
         this.player.dx = (this.left ? -GameConfig.PLAYER_SPEED : 0)
             + (this.right ? GameConfig.PLAYER_SPEED : 0);
@@ -231,10 +283,10 @@ export class SpaceInvadersGame {
 
         // === Враг стреляет ===
         if (Math.random() < 0.013 + this.score / 200000) {
-            let bottomRow = {};
+            const bottomRow: { [key: string]: Enemy } = {};
             for (let e of this.enemies) {
                 if (e.alive) {
-                    let key = Math.round(e.x);
+                    let key = Math.round(e.x).toString();
                     if (!bottomRow[key] || e.y > bottomRow[key].y) {
                         bottomRow[key] = e;
                     }
@@ -286,9 +338,9 @@ export class SpaceInvadersGame {
         }
     }
 
-    gameLoop() {
+    gameLoop(): void {
         if (!this.playing) {
-            cancelAnimationFrame(this.gameLoopId);
+            if (this.gameLoopId !== null) cancelAnimationFrame(this.gameLoopId);
             this.gameOver();
             this.unbindEvents();
             return;
@@ -298,7 +350,7 @@ export class SpaceInvadersGame {
         this.gameLoopId = requestAnimationFrame(() => this.gameLoop());
     }
 
-    resetGameState() {
+    resetGameState(): void {
         this.playing = true;
         this.score = 0;
         this.rows = GameConfig.ROWS_INITIAL;
@@ -310,11 +362,14 @@ export class SpaceInvadersGame {
         this.enemyShots.length = 0;
     }
 
-    gameOver() {
+    gameOver(): void {
         setTimeout(() => {
-            document.getElementById('spaceInvadersCanvas').style.display = 'none';
-            document.getElementById('si-over').style.display = 'block';
-            document.getElementById('si-score').textContent = this.score;
+            const canvas = document.getElementById('spaceInvadersCanvas') as HTMLCanvasElement | null;
+            const siOver = document.getElementById('si-over') as HTMLElement | null;
+            const siScore = document.getElementById('si-score') as HTMLElement | null;
+            if (canvas) canvas.style.display = 'none';
+            if (siOver) siOver.style.display = 'block';
+            if (siScore) siScore.textContent = this.score.toString();
         }, 400);
     }
 }

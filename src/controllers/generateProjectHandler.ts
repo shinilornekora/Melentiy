@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { ProjectGenerator } from "../domain/ProjectGenerator";
-import { sendErrorResponse } from "./utils/sendErrorResponse";
-import { Handler } from "../index";
+import { ProjectGenerator } from "../domain/ProjectGenerator.js";
+import { sendErrorResponse } from "./utils/sendErrorResponse.js";
+import { Handler } from "../index.js";
 
 interface GenerateProjectRequestBody {
     description: string;

@@ -1,8 +1,8 @@
-import { getTranspilerFileScript as _transpilerScript } from '../../infrastructure/llm/scripts/code';
-import { directNeuralHelp } from '../../infrastructure/llm/models/directNeuralHelp';
-import { maybeExtractTextBetweenQuotes } from './utils';
+import { getTranspilerFileScript as _transpilerScript } from '../../infrastructure/llm/scripts/code/index.js';
+import { directNeuralHelp } from '../../infrastructure/llm/models/directNeuralHelp.js';
+import { maybeExtractTextBetweenQuotes } from './utils.js';
 
-import {Settings, Structure} from "../types";
+import {Settings, Structure} from "../types.js";
 
 type Props = {
     structure: Structure;

@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import express from 'express';
 
-import { urlencoded } from "body-parser";
-import { generateProjectHandler } from "./controllers/generateProjectHandler";
-import { indexHandler } from "./controllers/indexHandler";
-import { HOSTNAME, PORT } from "./constants";
+import bodyParser from "body-parser";
+import { generateProjectHandler } from "./controllers/generateProjectHandler.js";
+import { indexHandler } from "./controllers/indexHandler.js";
+import { HOSTNAME, PORT } from "./constants.js";
 
 const server = express();
+const { urlencoded } = bodyParser;
 
 export type Handler = {
     method: 'post' | 'get';
@@ -21,6 +22,7 @@ const controllers: Handler[] = [
 
 server.use(express.static('resources'));
 server.use(urlencoded({ extended: true }));
+server.use("/dist/presentation", express.static("dist/presentation"));
 
 controllers.forEach(({ method, path, action }) => server[method](path, action))
 

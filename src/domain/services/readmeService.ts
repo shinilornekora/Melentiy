@@ -1,7 +1,7 @@
-import { getReadmesScript as _readmesScript } from '../../infrastructure/llm/scripts/structure';
-import { directNeuralHelp } from '../../infrastructure/llm/models/directNeuralHelp';
+import { getReadmesScript as _readmesScript } from '../../infrastructure/llm/scripts/structure/index.js';
+import { directNeuralHelp } from '../../infrastructure/llm/models/directNeuralHelp.js';
 
-import { Structure } from "../types";
+import { Structure } from "../types.js";
 
 const generateFolderReadme = async (folderName: string, subfolders: string[]) => {
     const description = _readmesScript({ folderName, subfolders });

@@ -1,9 +1,9 @@
-import { Structure, Settings } from "../types";
-import { indexJSFileScript } from "../../infrastructure/llm/scripts/validation";
-import { directNeuralHelp } from "../../infrastructure/llm/models/directNeuralHelp";
-import { maybeExtractTextBetweenQuotes } from "./utils";
-import {validateBundleScript} from "../../infrastructure/llm/scripts/validation/bundlerFile";
-import {bundlerFileName} from "../projectConfig";
+import { Structure, Settings } from "../types.js";
+import { indexJSFileScript } from "../../infrastructure/llm/scripts/validation/index.js";
+import { directNeuralHelp } from "../../infrastructure/llm/models/directNeuralHelp.js";
+import { maybeExtractTextBetweenQuotes } from "./utils.js";
+import {validateBundleScript} from "../../infrastructure/llm/scripts/validation/bundlerFile.js";
+import {bundlerFileName} from "../projectConfig.js";
 
 type Props = {
     structure: Structure;
@@ -17,12 +17,17 @@ export const validateIndexFile = async ({ structure, settings }: Props) => {
     const indexFileName = Object
         .keys(scriptFolder)
         .find(filename => filename.startsWith('index')) as string;
+    const indexJsFileContent = scriptFolder[indexFileName];
+
+    if (typeof indexJsFileContent === "object") {
+        throw new Error('INDEX_JS_BECAME_OBJECT_SOMEHOW');
+    }
 
     const improveIndexScriptFileScript = indexJSFileScript();
     const depsScript = `DEPENDENCIES: ${DEPS}`;
     const basicScripts = [
         depsScript,
-        scriptFolder[indexFileName] as string
+        indexJsFileContent
     ].map(script => ({ role: 'user', text: script }));
 
     const modelAnswer = await directNeuralHelp({
@@ -33,7 +38,7 @@ export const validateIndexFile = async ({ structure, settings }: Props) => {
     })
 
     const pureAnswer = maybeExtractTextBetweenQuotes(modelAnswer);
-    const scriptFileWasChanged = pureAnswer !== scriptFolder[indexFileName];
+    const scriptFileWasChanged = pureAnswer !== indexJsFileContent;
 
     if (scriptFileWasChanged) {
         return {

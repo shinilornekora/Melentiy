@@ -1,10 +1,10 @@
-import {getRelevantBundler as _bundlerScript} from '../../infrastructure/llm/scripts/settings';
-import {getBundlerFileScript as _bundlerFileScript} from '../../infrastructure/llm/scripts/code';
-import {directNeuralHelp} from '../../infrastructure/llm/models/directNeuralHelp';
-import {bundlerFileName, POSSIBLE_BUNDLERS} from '../projectConfig';
-import {maybeExtractTextBetweenQuotes} from './utils';
+import {getRelevantBundler as _bundlerScript} from '../../infrastructure/llm/scripts/settings/index.js';
+import {getBundlerFileScript as _bundlerFileScript} from '../../infrastructure/llm/scripts/code/index.js';
+import {directNeuralHelp} from '../../infrastructure/llm/models/directNeuralHelp.js';
+import {bundlerFileName, POSSIBLE_BUNDLERS} from '../projectConfig.js';
+import {maybeExtractTextBetweenQuotes} from './utils.js';
 
-import {BundlerType, Settings, Structure} from "../types";
+import {BundlerType, Settings, Structure} from "../types.js";
 
 type Props = {
     structure: Structure;

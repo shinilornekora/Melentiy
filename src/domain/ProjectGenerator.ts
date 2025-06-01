@@ -1,18 +1,18 @@
 import { getProjectMainSettings, improveDependencies, parseSettings } from './services/settingsService.js';
-import { getProjectStructure } from './services/structureService';
-import { insertREADMEFilesInOuterFolders } from './services/readmeService';
-import { insertRelevantBundler } from './services/bundlerService';
-import { insertTranspilerIntoProjectStructure } from './services/transpilerService';
-import { insertPackageJSONInProjectStructure } from './services/packageJsonService';
-import { createRealProjectStructure } from './services/fileSystemService';
+import { getProjectStructure } from './services/structureService.js';
+import { insertREADMEFilesInOuterFolders } from './services/readmeService.js';
+import { insertRelevantBundler } from './services/bundlerService.js';
+import { insertTranspilerIntoProjectStructure } from './services/transpilerService.js';
+import { insertPackageJSONInProjectStructure } from './services/packageJsonService.js';
+import { createRealProjectStructure } from './services/fileSystemService.js';
 import { maybeExtractTextBetweenQuotes } from './services/utils.js';
 import {
     insertBasicIndexStyles,
     insertIndexJSFile,
     insertIndexPageInProjectStructure,
-} from './services/indexFilesService';
-import { Project } from "./types";
-import { validateBundleFile, validateIndexFile } from "./services/validateService";
+} from './services/indexFilesService.js';
+import { Project } from "./types.js";
+import { validateBundleFile, validateIndexFile } from "./services/validateService.js";
 
 const initialProjectState = {
     settings: {

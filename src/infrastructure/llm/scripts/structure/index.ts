@@ -1,2 +1,2 @@
-export * from './src';
-export * from './readmes';
+export * from './src.js';
+export * from './readmes.js';
