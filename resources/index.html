@@ -1,93 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Melentiy workbench</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Montserrat:wght@200;400;700&display=swap">
-    </head>
-    <body>
-        <div id="si-popup" class="spaceinvaders-popup" style="display:none;">
-            <div class="si-popup-inner glass">
-                <button class="si-exit">&times;</button>
-                <div class="si-dialog" id="si-dialog" tabindex="0">
-                    <h2>Сыграем в Space Invaders, пока ждёте?</h2>
-                    <div class="si-dialog__actions">
-                        <button id="si-play" class="actionButton">Сыграть</button>
-                        <button id="si-cancel" class="actionButton glass">Нет, спасибо</button>
-                    </div>
-                </div>
-                <canvas id="spaceInvadersCanvas" width="680" height="900" style="display:none; margin: 0 auto; border-radius: 8px;"></canvas>
-                <div id="si-over" style="display:none; text-align:center; margin-top:1em;">
-                    <span style="font-size:1.2em;">Игра окончена! Ваш счет: <span id="si-score"></span></span><br>
-                    <button id="si-close" class="actionButton">Закрыть</button>
-                </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Melentiy workbench</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Montserrat:wght@200;400;700&display=swap">
+</head>
+<body>
+<div id="si-popup" class="spaceinvaders-popup" style="display:none;">
+    <div class="si-popup-inner glass">
+        <button class="si-exit">&times;</button>
+        <div class="si-dialog" id="si-dialog" tabindex="0">
+            <h2>Сыграем в Space Invaders, пока ждёте?</h2>
+            <div class="si-dialog__actions">
+                <button id="si-play" class="actionButton">Сыграть</button>
+                <button id="si-cancel" class="actionButton glass">Нет, спасибо</button>
             </div>
         </div>
-        <div class="lang-switch" id="langSwitch" title="Change language / Сменить язык">
-            <button type="button" data-lang="ru" class="lang-switch__btn" id="langBtnRu">RU</button>
-            <button type="button" data-lang="en" class="lang-switch__btn" id="langBtnEn">EN</button>
+        <canvas id="spaceInvadersCanvas" width="680" height="900" style="display:none; margin: 0 auto; border-radius: 8px;"></canvas>
+        <div id="si-over" style="display:none; text-align:center; margin-top:1em;">
+            <span style="font-size:1.2em;">Игра окончена! Ваш счет: <span id="si-score"></span></span><br>
+            <button id="si-close" class="actionButton">Закрыть</button>
         </div>
-        <div id="generation-modal" class="generation-modal glass" style="display: none;">
-            <div class="generation-modal__body" id="generationModalBody">
-                <div class="generation-modal__spinner"></div>
-                <div class="generation-modal__desc" id="generationModalDesc">Генерируем проект...</div>
-            </div>
-        </div>
-        <div id="history-panel" class="history-panel glass closed" aria-label="История генераций">
-            <button id="history-toggle" class="history-toggle" title="Показать/скрыть историю">🕓</button>
-            <div class="history-title neon">История генераций</div>
-            <ul id="history-list" class="history-list"></ul>
-        </div>
-        <div class="bg-blob"></div>
-        <div class="bg-blob second"></div>
-        <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
-        <main class="wrapper glass">
-            <header class="title neon-glow" tabindex="0">
-                What will we build today?
-            </header>
-            <section class="subtitle glass fade-in">
-                Choose your project topic.<br>
-                Highlight things you want to add (animations, frameworks, etc).
-            </section>
-            <form method="post" action="/generate" class="form glass" target="dummyframe" autocomplete="off">
-                <div class="textarea-wrapper">
-                    <textarea 
-                        id="projectDescription"
-                        placeholder="Write your beautiful theme there..."
-                        name="description"
-                        class="topic"
-                        title="write the project description"
-                        aria-label="write the project description"
-                        maxlength="2000"
-                        spellcheck="true"
+    </div>
+</div>
+<div class="lang-switch" id="langSwitch" title="Change language / Сменить язык">
+    <button type="button" data-lang="ru" class="lang-switch__btn" id="langBtnRu">RU</button>
+    <button type="button" data-lang="en" class="lang-switch__btn" id="langBtnEn">EN</button>
+</div>
+<div id="generation-modal" class="generation-modal glass" style="display: none;">
+    <div class="generation-modal__body" id="generationModalBody">
+        <div class="generation-modal__spinner"></div>
+        <div class="generation-modal__desc" id="generationModalDesc">Генерируем проект...</div>
+    </div>
+</div>
+
+<!-- Новый блок истории -->
+<div id="history-panel" class="history-panel glass closed" aria-label="История генераций">
+    <button id="history-toggle" class="history-toggle" title="Показать/скрыть историю">
+        <span aria-hidden="true">🕓</span>
+    </button>
+    <div class="history-header">
+        <div class="history-title neon">История генераций</div>
+        <button class="history-clear-btn" title="Очистить историю" id="historyClearBtn" aria-label="Очистить всю историю">
+            <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M5 6.5h10M8 8.5v6M12 8.5v6M6 6.5V15a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6.5m-5-3h2a1 1 0 0 1 1 1V6.5h-5V4.5a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+        </button>
+    </div>
+    <ul id="history-list" class="history-list new-history-design"></ul>
+    <div class="history-empty" id="historyEmpty" style="display:none;">
+        <span>Нет записей</span>
+    </div>
+</div>
+<!-- Конец истории -->
+
+<div class="bg-blob"></div>
+<div class="bg-blob second"></div>
+<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+<main class="wrapper glass">
+    <header class="title neon-glow" tabindex="0">
+        What will we build today?
+    </header>
+    <section class="subtitle glass fade-in">
+        Choose your project topic.<br>
+        Highlight things you want to add (animations, frameworks, etc).
+    </section>
+    <form method="post" action="/generate" class="form glass" target="dummyframe" autocomplete="off">
+        <div class="textarea-wrapper">
+                    <textarea
+                            id="projectDescription"
+                            placeholder="Write your beautiful theme there..."
+                            name="description"
+                            class="topic"
+                            title="write the project description"
+                            aria-label="write the project description"
+                            maxlength="2000"
+                            spellcheck="true"
                     ></textarea>
-                    <span class="textarea-border-anim"></span>
-                </div>
-                <input 
-                    type="submit" 
-                    class="actionButton"
-                    value="Generate!" 
-                    title="generate a project"
-                    aria-label="generate a project"
-                />
-            </form>
-            <details class="details glass slide-in">
-                <summary><span class="neon">Here's a good template for your idea!</span></summary>
-                <p>
-                    <b>
-                        I want to create project for <mark>...</mark>, <br>
-                        it must have frameworks/libraries like <mark>...</mark>,<br>
-                        it mustn't have utilities like <mark>...</mark>,<br>
-                        the app will cover <mark>...</mark> of users.
-                    </b>
-                </p>
-            </details>
-            <footer class="footer glass">
-                © 2025 Melentiy workbench. Crafted like a piece of art.
-            </footer>
-        </main>
-        <script type="module" src="./dist/presentation/index.js"></script>
-    </body>
+            <span class="textarea-border-anim"></span>
+        </div>
+        <input
+                type="submit"
+                class="actionButton"
+                value="Generate!"
+                title="generate a project"
+                aria-label="generate a project"
+        />
+    </form>
+    <details class="details glass slide-in">
+        <summary><span class="neon">Here's a good template for your idea!</span></summary>
+        <p>
+            <b>
+                I want to create project for <mark>...</mark>, <br>
+                it must have frameworks/libraries like <mark>...</mark>,<br>
+                it mustn't have utilities like <mark>...</mark>,<br>
+                the app will cover <mark>...</mark> of users.
+            </b>
+        </p>
+    </details>
+    <footer class="footer glass">
+        © 2025 Melentiy workbench. Crafted like a piece of art.
+    </footer>
+</main>
+<script type="module" src="./dist/presentation/index.js"></script>
+</body>
 </html>
