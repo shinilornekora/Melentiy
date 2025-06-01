@@ -23,6 +23,7 @@ const controllers: Handler[] = [
 server.use(express.static('resources'));
 server.use(urlencoded({ extended: true }));
 server.use("/dist/presentation", express.static("dist/presentation"));
+server.use("/resources", express.static("resources"));
 
 controllers.forEach(({ method, path, action }) => server[method](path, action))
 

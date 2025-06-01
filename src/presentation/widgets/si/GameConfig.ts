@@ -6,7 +6,8 @@ export class GameConfig {
     static ENEMY_X_OFFSET = 28;
     static ENEMY_Y_OFFSET = 38;
 
-    // Границы для игрока
+    // Настройки игрока
+    static PLAYER_LIVES = 5;
     static PLAYER_WIDTH = 36;
     static PLAYER_HEIGHT = 15;
     static PLAYER_TOWER_HEIGHT = 7;
