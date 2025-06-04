@@ -1,4 +1,3 @@
-
 const generationModal = document.getElementById('generation-modal') as HTMLDivElement | null;
 const generationModalDesc = document.getElementById('generationModalDesc') as HTMLElement | null;
 const spinner = document.querySelector('.generation-modal__spinner') as HTMLElement | null;
@@ -29,10 +28,17 @@ export function showGenerationModal(msg: string = 'Генерируем прое
 }
 
 export function finishGeneration(msg: string = 'Генерация завершена!'): void {
-    if (!generationModal || !generationModalDesc) return;
+    if (!generationModal || !generationModalDesc) {
+        return;
+    }
+    
     generationModalDesc.textContent = msg;
     setSpinner('check');
-    if (modalTimeout) clearTimeout(modalTimeout);
+    
+    if (modalTimeout) {
+        clearTimeout(modalTimeout);
+    }
+
     modalTimeout = setTimeout(() => {
         if (generationModal) generationModal.style.display = 'none';
         setSpinner('loader');
@@ -59,7 +65,7 @@ export const bindNotification = (form: HTMLFormElement | null): void => {
             if (modalTimeout) clearTimeout(modalTimeout);
             modalTimeout = setTimeout(() => {
                 errorGeneration("Что-то пошло не так...");
-            }, 1000 * 3);
+            }, 1000 * 60 * 2);
         });
     }
 };
