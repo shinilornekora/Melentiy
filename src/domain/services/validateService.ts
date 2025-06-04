@@ -20,7 +20,7 @@ export const validateIndexFile = async ({ structure, settings }: Props) => {
     const indexJsFileContent = scriptFolder[indexFileName];
 
     if (typeof indexJsFileContent === "object") {
-        throw new Error('INDEX_JS_BECAME_OBJECT_SOMEHOW');
+        throw new Error('INDEX_FILE_BECAME_OBJECT_SOMEHOW');
     }
 
     const improveIndexScriptFileScript = indexJSFileScript();
@@ -77,9 +77,6 @@ export const validateBundleFile = async ({ structure, settings }: Props) => {
 
     const pureAnswer = maybeExtractTextBetweenQuotes(modelAnswer);
     const fileWasChanged = pureAnswer !== projectStructure[bundlerCertainFileName];
-
-    // console.log(`raw bundler - ${projectStructure[bundlerCertainFileName]}`);
-    // console.log(`new bundler - ${pureAnswer}`)
 
     console.log(`-- Validated bundler file [${fileWasChanged ? 'WAS_CHANGED' : 'NO_CHANGES'}] --`);
 

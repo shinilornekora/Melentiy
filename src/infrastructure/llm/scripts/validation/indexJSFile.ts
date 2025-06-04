@@ -14,7 +14,7 @@ export const indexJSFileScript = () => {
             - Anything else that would cause the code not to work  
         3. Fix all issues you find so the code will run correctly.  
         
-        You need to return only the code that you improved.
+        You need to return IMPROVED CODE ONLY.
         No explicit responses.
   `;
 };

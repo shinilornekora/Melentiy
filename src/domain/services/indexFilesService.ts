@@ -111,8 +111,8 @@ export async function insertIndexJSFile({ structure, settings, description }: Pr
 
     const projectStructure = structure[P_NAME] as Structure;
     const publicProjectSector = projectStructure['public'] as Structure;
-    const srcProjectSector = projectStructure['src'] as Structure;
     const htmlCode = publicProjectSector['index.html'] as string;
+    let srcProjectSector = projectStructure['src'] as Structure;
 
     const prompt = _indexScript({
         htmlCode,
@@ -132,6 +132,18 @@ export async function insertIndexJSFile({ structure, settings, description }: Pr
     if (typeof structure[P_NAME] !== 'object') {
         throw new Error('Invalid abstract tree data - root is not an object.');
     }
+
+    // Порой в структуре появляются странные index папки.
+    // Такие не нужны в основной кодовой базе - выкидываем
+    srcProjectSector = Object.fromEntries(
+        Object.entries(srcProjectSector)
+            .filter(([itemName, value]: [string, string | Object]) => {
+                const hasMaliciousFile = itemName.startsWith('index.');
+                const isThisFileObject = value instanceof Object;
+
+                return !(hasMaliciousFile && isThisFileObject);
+            })
+    );
 
     structure[P_NAME] = {
         ...projectStructure,

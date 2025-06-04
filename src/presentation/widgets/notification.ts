@@ -65,7 +65,7 @@ export const bindNotification = (form: HTMLFormElement | null): void => {
             if (modalTimeout) clearTimeout(modalTimeout);
             modalTimeout = setTimeout(() => {
                 errorGeneration("Что-то пошло не так...");
-            }, 1000 * 60 * 2);
+            }, 1000 * 60 * 5);
         });
     }
 };

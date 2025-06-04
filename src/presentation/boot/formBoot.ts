@@ -8,8 +8,6 @@ export function bootForm() {
 
     if (form) {
         form.addEventListener('submit', function(e: Event) {
-            e.preventDefault();
-
             const siPopup = document.getElementById('si-popup');
             const siCanvas = document.getElementById('spaceInvadersCanvas');
             const siDialog = document.getElementById('si-dialog');
@@ -27,14 +25,12 @@ export function bootForm() {
             if (siCancel) {
                 siCancel.onclick = function() {
                     if (siPopup) siPopup.style.display = 'none';
-                    form.submit();
                 }
             }
 
             if (siExit) {
                 (siExit as HTMLElement).onclick = function() {
                     if (siPopup) siPopup.style.display = 'none';
-                    form.submit();
                 }
             }
 
@@ -42,14 +38,12 @@ export function bootForm() {
                 siPlay.onclick = function() {
                     if (siDialog) siDialog.style.display = 'none';
                     startSpaceInvaders();
-                    form.submit();
                 }
             }
 
             if (siClose) {
                 siClose.onclick = function() {
                     if (siPopup) siPopup.style.display = 'none';
-                    form.submit();
                 }
             }
         });
