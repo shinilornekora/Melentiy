@@ -1,10 +1,10 @@
-type AliceMessage = {
+export type AliceMessage = {
     message: {
         text: string
     }
 }
 
-type AliceAnswer = {
+export type AliceAnswer = {
     result?: {
         alternatives?: AliceMessage[]
     }
