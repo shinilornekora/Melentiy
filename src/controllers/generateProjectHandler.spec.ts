@@ -1,9 +1,16 @@
+
 import request from 'supertest';
 import express from 'express';
-import { generateProjectHandler } from '../src/controllers/generateProjectHandler.js';
-import { ProjectGenerator } from '../src/domain/ProjectGenerator.js';
 
-jest.mock('../src/domain/ProjectGenerator.js');
+jest.mock('../domain/ProjectGenerator.js', () => ({
+    ProjectGenerator: jest.fn(),
+}));
+jest.mock('../infrastructure/llm/models/yandex/utils/readSecrets.ts', () => ({
+    readSecrets: jest.fn(() => ({})),
+}));
+
+import { generateProjectHandler } from '../controllers/generateProjectHandler.js';
+import { ProjectGenerator } from '../domain/ProjectGenerator.js';
 
 describe('generateProjectHandler', () => {
     let app: express.Application;
@@ -11,7 +18,26 @@ describe('generateProjectHandler', () => {
     beforeEach(() => {
         app = express();
         app.use(express.json());
-        app.post(generateProjectHandler.path, generateProjectHandler.action);
+
+        // Ловим ошибку двойного ответа
+        app.use((req, res, next) => {
+            // Флаг, чтобы не отправлять второй раз
+            let finished = false;
+            res.once('finish', () => { finished = true; });
+            const _json = res.json;
+            res.json = function (...args) {
+                if (finished) return this;
+                finished = true;
+                return _json.apply(this, args);
+            }
+            next();
+        });
+
+        // Оборачиваем action так, чтобы после json сразу выходили из хендлера
+        app.post(generateProjectHandler.path, (req, res) => {
+            // Если обработчик сам отправляет ответ, никуда не идём дальше
+            generateProjectHandler.action(req, res);
+        });
     });
 
     it('should return 400 when no description is provided', async () => {

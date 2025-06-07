@@ -3,6 +3,7 @@ import { readSecrets } from './utils/readSecrets.js';
 import { createRequestHeaders } from './utils/createRequestHeaders.js';
 import { createPrompt } from './utils/createPrompt.js';
 import { extractAliceAnswer } from './utils/extractGPTAnswer.js';
+import {Message} from "../../../../domain/types";
 
 const SECRET_PATH = './secrets';
 const SOURCE_URL = "https://llm.api.cloud.yandex.net/foundationModels/v1/completion";
@@ -33,7 +34,9 @@ describe('callAlice', () => {
 
         const result = await callAlice({
             mainMessage: 'test message',
-            messages: [{ role: 'user', content: 'test content' }]
+            temperature: 5000,
+            maxTokens: 1000,
+            messages: [{ role: 'user', content: 'test content' }] as Message[]
         });
 
         expect(readSecrets).toHaveBeenCalledWith({ secretPath: SECRET_PATH });
@@ -59,7 +62,9 @@ describe('callAlice', () => {
 
         const result = await callAlice({
             mainMessage: 'test message',
-            messages: [{ role: 'user', content: 'test content' }]
+            temperature: 5000,
+            maxTokens: 1000,
+            messages: [{ role: 'user', content: 'test content' }] as Message[]
         });
 
         expect(result).toBeUndefined();
@@ -88,6 +93,8 @@ describe('callAlice', () => {
 
         await expect(callAlice({
             mainMessage: 'test message',
+            temperature: 5000,
+            maxTokens: 1000,
             messages: []
         })).rejects.toThrow('Wrong API key or you didn\'t provide it');
     });
@@ -114,6 +121,8 @@ describe('callAlice', () => {
 
         await expect(callAlice({
             mainMessage: 'test message',
+            temperature: 5000,
+            maxTokens: 1000,
             messages: []
         })).rejects.toThrow('Whoa, too many requests, model wants to sleep a little, give it a break');
     });
@@ -140,6 +149,8 @@ describe('callAlice', () => {
 
         await expect(callAlice({
             mainMessage: 'test message',
+            temperature: 5000,
+            maxTokens: 1000,
             messages: []
         })).rejects.toThrow('Model died. Try different one');
     });
@@ -166,6 +177,8 @@ describe('callAlice', () => {
 
         await expect(callAlice({
             mainMessage: 'test message',
+            temperature: 5000,
+            maxTokens: 1000,
             messages: []
         })).rejects.toThrow('UNKNOWN ERROR! Search for it there: https://yandex.cloud/ru/docs/api-design-guide/concepts/errors');
     });
@@ -182,6 +195,8 @@ describe('callAlice', () => {
 
         await expect(callAlice({
             mainMessage: 'test message',
+            temperature: 5000,
+            maxTokens: 1000,
             messages: []
         })).rejects.toThrow('Test error');
         expect(console.error).toHaveBeenCalledWith('Error during callAlice:', mockError);

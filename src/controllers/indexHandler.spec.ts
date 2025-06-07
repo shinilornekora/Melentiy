@@ -1,27 +1,29 @@
 import { Request, Response } from "express";
 import { indexHandler } from "./indexHandler";
-import { promises as fs } from "fs";
-import { sendErrorResponse } from "../utils/sendErrorResponse";
+import { sendErrorResponse } from "./utils/sendErrorResponse";
 
-jest.mock("fs", () => {
-    const originalModule = jest.requireActual("fs/promises");
-    return {
-        ...originalModule,
-        readFile: jest.fn()
-    };
-});
+// Мокаем sendErrorResponse как и раньше
+jest.mock("./utils/sendErrorResponse", () => ({
+    sendErrorResponse: jest.fn()
+}));
 
-jest.mock("../utils/sendErrorResponse", () => {
-    return {
-        sendErrorResponse: jest.fn()
-    };
-});
+// Мокаем fs.promises.readFile!
+const readFileMock = jest.fn();
+jest.mock("fs", () => ({
+    ...jest.requireActual("fs"),
+    promises: {
+        ...jest.requireActual("fs").promises,
+        readFile: readFileMock
+    }
+}));
 
 describe("indexHandler", () => {
     let mockRequest: Request;
     let mockResponse: Response;
 
     beforeEach(() => {
+        readFileMock.mockReset();
+        (sendErrorResponse as jest.Mock).mockReset();
         mockRequest = {} as Request;
         mockResponse = {
             setHeader: jest.fn(),
@@ -32,7 +34,7 @@ describe("indexHandler", () => {
 
     it("should send HTML file when reading is successful", async () => {
         const mockData = Buffer.from("<html>Test</html>");
-        (fs.readFile as jest.Mock).mockResolvedValue(mockData);
+        readFileMock.mockResolvedValue(mockData);
 
         await indexHandler.action(mockRequest, mockResponse);
 
@@ -42,7 +44,7 @@ describe("indexHandler", () => {
 
     it("should call sendErrorResponse when there is an error reading the file", async () => {
         const mockError = new Error("File not found");
-        (fs.readFile as jest.Mock).mockRejectedValue(mockError);
+        readFileMock.mockRejectedValue(mockError);
 
         await indexHandler.action(mockRequest, mockResponse);
 
@@ -56,8 +58,8 @@ describe("indexHandler", () => {
 
     it("should log the error when there is an error reading the file", async () => {
         const mockError = new Error("File not found");
-        const consoleSpy = jest.spyOn(console, "log");
-        (fs.readFile as jest.Mock).mockRejectedValue(mockError);
+        const consoleSpy = jest.spyOn(console, "log").mockImplementation(() => {});
+        readFileMock.mockRejectedValue(mockError);
 
         await indexHandler.action(mockRequest, mockResponse);
 

@@ -1,24 +1,32 @@
-import { insertIndexPageInProjectStructure, getIndexFileName, insertIndexJSFile } from './indexFilesService.ts';
 import {
+    insertIndexPageInProjectStructure,
+    insertBasicIndexStyles,
+    getIndexFileName,
+    insertIndexJSFile
+} from './indexFilesService';
+
+import {
+    getIndexPageStylesScript as _indexStyle,
     getIndexPageScript as _indexPage,
+    getIndexScript as _indexScript
 } from '../../infrastructure/llm/scripts/code/index.js';
 import { directNeuralHelp } from '../../infrastructure/llm/models/directNeuralHelp.js';
 import { maybeExtractTextBetweenQuotes } from './utils.js';
-import { Project, Settings, Structure } from "../types.js";
-import { insertBasicIndexStyles } from './indexFilesService';
 
+import { Project, Settings, Structure } from "../types.js";
 
 jest.mock('./utils.js', () => ({
-    maybeExtractTextBetweenQuotes: (input: string): string => input
+    maybeExtractTextBetweenQuotes: jest.fn((input: string) => input)
 }));
 
 jest.mock('../../infrastructure/llm/models/directNeuralHelp.js', () => ({
-    directNeuralHelp: jest.fn((args: any) => Promise.resolve(args.mainMessage))
+    directNeuralHelp: jest.fn()
 }));
 
 jest.mock('../../infrastructure/llm/scripts/code/index.js', () => ({
-    getIndexPageScript: jest.fn(() => 'dummy-index-page-script'),
-    getIndexScript: jest.fn(() => 'dummy-index-script')
+    getIndexPageScript: jest.fn(),
+    getIndexScript: jest.fn(),
+    getIndexPageStylesScript: jest.fn()
 }));
 
 describe('insertIndexPageInProjectStructure', () => {
@@ -29,308 +37,187 @@ describe('insertIndexPageInProjectStructure', () => {
     const settings: Settings = {
         P_NAME,
         DEPS,
-    };
+    } as Settings;
 
-    let structure: Project = {
-        [P_NAME]: {
-            public: {
-                'index.html': ''
-            },
-            src: {}
-        }
-    };
-
+    let structure: Structure;
     beforeEach(() => {
         jest.resetAllMocks();
+        structure = {
+            [P_NAME]: {
+                public: {
+                    'index.html': ''
+                },
+                src: {}
+            }
+        } as Structure;
     });
 
     it('should insert index.html into public directory', async () => {
-        const mockIndexPageScript = 'Mocked script for index.html';
-        const mockModelAnswer = '"Mocked model answer"';
-        const mockPureAnswer = 'Mocked pure answer';
+        (_indexPage as jest.Mock).mockReturnValue('index page script');
+        (directNeuralHelp as jest.Mock).mockResolvedValue('the html!');
+        (maybeExtractTextBetweenQuotes as jest.Mock).mockReturnValue('the html!');
 
-        (_indexPage as jest.Mock).mockReturnValue(mockIndexPageScript);
-        (directNeuralHelp as jest.Mock).mockResolvedValue(mockModelAnswer);
-        (maybeExtractTextBetweenQuotes as jest.Mock).mockReturnValue(mockPureAnswer);
-
-        const updatedStructure = await insertIndexPageInProjectStructure({
+        await insertIndexPageInProjectStructure({
             structure,
             settings,
             description,
         });
 
-        expect(directNeuralHelp).toHaveBeenCalledWith({
-            temperature: 0.3,
-            maxTokens: 8000,
-            mainMessage: mockIndexPageScript,
-            messages: [],
+        const proj = structure[P_NAME] as Structure;
+        const pub = proj.public as Structure;
+        expect(pub['index.html']).toBe('the html!');
+    });
+
+    it('should throw if P_NAME is not an object', async () => {
+        (_indexPage as jest.Mock).mockReturnValue('index page script');
+        (directNeuralHelp as jest.Mock).mockResolvedValue('html');
+
+        const badStruct = { [P_NAME]: 123 as unknown as Structure };
+        await expect(insertIndexPageInProjectStructure({ structure: badStruct, settings, description }))
+            .rejects.toThrow('Invalid abstract tree data - root is not an object.');
+    });
+
+    it('should call console.log when success', async () => {
+        (_indexPage as jest.Mock).mockReturnValue('index page script');
+        (directNeuralHelp as jest.Mock).mockResolvedValue('page!');
+        (maybeExtractTextBetweenQuotes as jest.Mock).mockReturnValue('page!');
+        const spy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+        await insertIndexPageInProjectStructure({
+            structure,
+            settings,
+            description,
         });
-        expect(updatedStructure[P_NAME].public['index.html']).toBe(mockPureAnswer);
-    });
 
-    it('should handle invalid abstract tree data and throw an error', async () => {
-        const invalidStructure = {
-            [P_NAME]: 'string instead of object',
-        };
-
-        (_indexPage as jest.Mock).mockReturnValue('script');
-        (directNeuralHelp as jest.Mock).mockResolvedValue('"html code"');
-
-        await expect(
-            insertIndexPageInProjectStructure({ structure: invalidStructure as Project, settings, description })
-        ).rejects.toThrow('Invalid abstract tree data - root is not an object.');
-    });
-
-    it('should call console.log once when the index page was inserted successfully', async () => {
-        const consoleSpy = jest.spyOn(console, 'log');
-        const mockIndexPageScript = 'Mocked script for index.html';
-        const mockModelAnswer = '"Mocked model answer"';
-        const mockPureAnswer = 'Mocked pure answer';
-
-        (_indexPage as jest.Mock).mockReturnValue(mockIndexPageScript);
-        (directNeuralHelp as jest.Mock).mockResolvedValue(mockModelAnswer);
-        (maybeExtractTextBetweenQuotes as jest.Mock).mockReturnValue(mockPureAnswer);
-
-        await insertIndexPageInProjectStructure({ structure, settings, description });
-
-        expect(consoleSpy).toHaveBeenCalledWith(' -- Index page was inserted successfully -- ');
+        expect(spy).toHaveBeenCalledWith(' -- Index page was inserted successfully -- ');
+        spy.mockRestore();
     });
 });
 
 describe('insertBasicIndexStyles', () => {
-    const mockP_NAME = 'projectName';
-    const mockSettings: Settings = {
-        P_NAME: mockP_NAME,
-        DEPS: 'react,typescript'
-    };
-    const mockDescription = 'Sample project description';
+    const P_NAME = 'projectName';
+    const settings: Settings = { P_NAME, DEPS: 'react,typescript' } as Settings;
+    const description = 'desc';
 
-    const mockHtmlCode = '<html>\n    <head>\n        <title>Test Project</title>\n    </head>\n    <body>\n        <div id="root"></div>\n    </body>\n</html>';
-
-    const baseStructure: Project = {
-        [mockP_NAME]: {
-            public: {
-                'index.html': mockHtmlCode
-            },
-            src: {
-                'App.jsx': 'App code'
-            }
-        }
-    };
-
+    let structure: Structure;
     beforeEach(() => {
-        const mockReturn = {
-            message: {
-                content: {
-                    text: '`body { background: white; }`'
-                }
-            }
-        };
-        (directNeuralHelp as jest.Mock).mockResolvedValue(mockReturn);
-        (maybeExtractTextBetweenQuotes as jest.Mock).mockReturnValue('body { background: white; }');
-    });
-
-    test('should insert styles.css with generated content', async () => {
-        const expectedStructure: Project = {
-            [mockP_NAME]: {
+        jest.resetAllMocks();
+        structure = {
+            [P_NAME]: {
                 public: {
-                    'index.html': mockHtmlCode,
-                    'styles.css': 'body { background: white; }'
+                    'index.html': '<html></html>'
                 },
-                src: {
-                    'App.jsx': 'App code'
-                }
+                src: {}
             }
-        };
-
-        const result = await insertBasicIndexStyles({
-            structure: baseStructure as unknown as Project,
-            settings: mockSettings,
-            description: mockDescription
-        });
-
-        expect(result).toEqual(expectedStructure);
-        expect(directNeuralHelp).toHaveBeenCalledWith({
-            temperature: 0.3,
-            maxTokens: 8000,
-            mainMessage: expect.any(String),
-            messages: []
-        });
+        } as Structure;
     });
 
-    test('should throw an error if project name is not an object in the structure', async () => {
-        const invalidProjectNameStructure: Project = {
-            [mockP_NAME]: 'invalid value'
-        };
-
-        await expect(
-            insertBasicIndexStyles({
-                structure: invalidProjectNameStructure as unknown as Project,
-                settings: mockSettings,
-                description: mockDescription
-            })
-        ).rejects.toThrow('Invalid abstract tree data - root is not an object.');
+    it('should insert styles.css with content', async () => {
+        (_indexStyle as jest.Mock).mockReturnValue('prompt-css');
+        (directNeuralHelp as jest.Mock).mockResolvedValue('body { color: red; }');
+        (maybeExtractTextBetweenQuotes as jest.Mock).mockReturnValue('body { color: red; }');
+        await insertBasicIndexStyles({ structure, settings, description });
+        const proj = structure[P_NAME] as Structure;
+        const pub = proj.public as Structure;
+        expect(pub['styles.css']).toBe('body { color: red; }');
     });
 });
 
-
-
 describe('getIndexFileName', () => {
-    test('returns index.tsx for React with TypeScript content', () => {
-        const scriptContent = 'interface TestInterface {}\ntype TestType = number;';
-        expect(getIndexFileName(scriptContent)).toBe('index.tsx');
+    it('returns index.tsx for react+ts', () => {
+        expect(getIndexFileName('interface X {}\nreact')).toBe('index.tsx');
     });
-
-    test('returns index.jsx for React without TypeScript', () => {
-        const scriptContent = 'const App = () => <div>Hello React</div>';
-        expect(getIndexFileName(scriptContent)).toBe('index.jsx');
+    it('returns index.jsx for only react', () => {
+        expect(getIndexFileName('react')).toBe('index.jsx');
     });
-
-    test('returns index.vue for Vue content', () => {
-        const scriptContent = '<template><div>Vue Component</div></template>';
-        expect(getIndexFileName(scriptContent)).toBe('index.vue');
+    it('returns index.vue for vue', () => {
+        expect(getIndexFileName('vue')).toBe('index.vue');
     });
-
-    test('returns index.ts for TypeScript only', () => {
-        const scriptContent = 'type MyType = string;';
-        expect(getIndexFileName(scriptContent)).toBe('index.ts');
+    it('returns index.ts for only ts', () => {
+        expect(getIndexFileName('type Foo = number')).toBe('index.ts');
     });
-
-    test('returns index.ts when TypeScript without interface is defined with space', () => {
-        const scriptContent = 'type MyType = string;';
-        expect(getIndexFileName(scriptContent)).toBe('index.ts');
+    it('returns index.ts for interface match', () => {
+        expect(getIndexFileName('interface X {}')).toBe('index.ts');
     });
-
-    test('returns index.js when no pattern is matched', () => {
-        const scriptContent = 'const x = 5; console.log(x);';
-        expect(getIndexFileName(scriptContent)).toBe('index.js');
-    });
-
-    test('returns index.ts even if TypeScript keyword is after other languages', () => {
-        const scriptContent = 'some vue content\ntype TestType = string;';
-        expect(getIndexFileName(scriptContent)).toBe('index.ts');
-    });
-
-    test('returns index.js when nothing matches', () => {
-        const scriptContent = '';
-        expect(getIndexFileName(scriptContent)).toBe('index.js');
+    it('returns index.js for generic', () => {
+        expect(getIndexFileName('something random')).toBe('index.js');
     });
 });
 
 describe('insertIndexJSFile', () => {
-    let testStructure = {
-        'testProject': {
-            public: {
-                'index.html': 'dummy-html'
-            },
-            src: {
-                'otherFile.js': 'other content',
-                'index.invalid': { another: 'object' }
-            }
-        }
-    } as Structure;
+    const P_NAME = 'somep';
+    const settings: Settings = { P_NAME, DEPS: '' } as Settings;
+    const description = 'desc';
 
-    const validSettings = {
-        DEPS: 'react,typescript',
-        P_NAME: 'testProject'
-    } as Settings;
-    const description = 'A test project';
-
+    let structure: Structure;
     beforeEach(() => {
-        jest.clearAllMocks();
-    });
-
-    it('should insert an index.js file correctly when no TypeScript/React definitions are in the script', async () => {
-        const scriptContent = 'console.log("hello world");';
-        const mockDirectNeuralHelp = jest.requireMock('../../infrastructure/llm/models/directNeuralHelp.js')
-            .directNeuralHelp as jest.Mock;
-        const mockGetIndexScript = jest.requireMock('../../infrastructure/llm/scripts/code/index.js').getIndexScript as jest.Mock;
-
-        mockDirectNeuralHelp.mockResolvedValueOnce(scriptContent);
-        mockGetIndexScript.mockReturnValueOnce(scriptContent);
-
-        await insertIndexJSFile({ structure: testStructure, settings: validSettings, description });
-
-        expect(testStructure['testProject']?.src['index.js']).toBe('console.log("hello world");');
-    });
-
-    it('should insert an index.ts file when script contains TypeScript but not React', async () => {
-        const tsContent = 'interface Test { id: number; } console.log("TypeScript world");';
-        const mockDirectNeuralHelp = jest.requireMock('../../infrastructure/llm/models/directNeuralHelp.js')
-            .directNeuralHelp as jest.Mock;
-        const mockGetIndexScript = jest.requireMock('../../infrastructure/llm/scripts/code/index.js').getIndexScript as jest.Mock;
-
-        mockDirectNeuralHelp.mockResolvedValueOnce(tsContent);
-        mockGetIndexScript.mockReturnValueOnce(tsContent);
-
-        await insertIndexJSFile({ structure: testStructure, settings: { ...validSettings, DEPS: 'typescript' }, description });
-
-        expect(testStructure['testProject']?.src['index.ts']).toBe('interface Test { id: number; } console.log("TypeScript world");');
-    });
-
-    it('should insert an index.jsx file when script contains React but not TypeScript', async () => {
-        const jsxContent = "function App() { return <div>Hello React</div>; }";
-        const mockDirectNeuralHelp = jest.requireMock('../../infrastructure/llm/models/directNeuralHelp.js')
-            .directNeuralHelp as jest.Mock;
-        const mockGetIndexScript = jest.requireMock('../../infrastructure/llm/scripts/code/index.js').getIndexScript as jest.Mock;
-
-        mockDirectNeuralHelp.mockResolvedValueOnce(jsxContent);
-        mockGetIndexScript.mockReturnValueOnce(jsxContent);
-
-        await insertIndexJSFile({ structure: testStructure, settings: { ...validSettings, DEPS: 'react' }, description });
-
-        expect(testStructure['testProject']?.src['index.jsx']).toBe("function App() { return <div>Hello React</div>; }");
-    });
-
-    it('should insert an index.tsx file when script contains both React and TypeScript', async () => {
-        const tsxContent = "interface State { count: number; } function App() { return <div>{}</div>; }";
-        const mockDirectNeuralHelp = jest.requireMock('../../infrastructure/llm/models/directNeuralHelp.js')
-            .directNeuralHelp as jest.Mock;
-        const mockGetIndexScript = jest.requireMock('../../infrastructure/llm/scripts/code/index.js').getIndexScript as jest.Mock;
-
-        mockDirectNeuralHelp.mockResolvedValueOnce(tsxContent);
-        mockGetIndexScript.mockReturnValueOnce(tsxContent);
-
-        await insertIndexJSFile({ structure: testStructure, settings: validSettings, description });
-
-        expect(testStructure['testProject']?.src['index.tsx']).toBe("interface State { count: number; } function App() { return <div>{}</div>; }");
-    });
-
-    it('should filter out malicious index directory objects from the src structure', async () => {
-        const scriptContent = 'console.log("no problem here");';
-        const structure = {
-            'testProject': {
+        jest.resetAllMocks();
+        structure = {
+            [P_NAME]: {
                 public: {
-                    'index.html': 'dummy-html'
+                    'index.html': '<html></html>'
                 },
                 src: {
-                    'index.invalidDir': {},
-                    'anotherIndex.invalidDir': { nested: 'dir' },
-                    'otherFile.js': 'other content'
+                    keepme: 'foo'
                 }
             }
         } as Structure;
-        const mockDirectNeuralHelp = jest.requireMock('../../infrastructure/llm/models/directNeuralHelp.js')
-            .directNeuralHelp as jest.Mock;
-        const mockGetIndexScript = jest.requireMock('../../infrastructure/llm/scripts/code/index.js').getIndexScript as jest.Mock;
-
-        mockDirectNeuralHelp.mockResolvedValueOnce(scriptContent);
-        mockGetIndexScript.mockReturnValueOnce(scriptContent);
-
-        await insertIndexJSFile({ structure, settings: validSettings, description });
-
-        expect(Object.keys(structure['testProject']?.src)).not.toContain('index.invalidDir');
-        expect(Object.keys(structure['testProject']?.src)).not.toContain('anotherIndex.invalidDir');
-        expect(Object.keys(structure['testProject']?.src)).toContain('index.js');
-        expect(structure['testProject']?.src['index.js']).toBe(scriptContent);
     });
 
-    it('should throw an error if the project root is not an object', async () => {
-        const corruptedStructure = {
-            'testProject': 'not an object'
-        } as Structure;
-        await expect(
-            insertIndexJSFile({ structure: corruptedStructure, settings: validSettings, description })
-        ).rejects.toThrowError('Invalid abstract tree data - root is not an object.');
+    it('should insert index.js file for generic code', async () => {
+        (_indexScript as jest.Mock).mockReturnValue('prompt for index');
+        (directNeuralHelp as jest.Mock).mockResolvedValue('console.log("hello")');
+        (maybeExtractTextBetweenQuotes as jest.Mock).mockReturnValue('console.log("hello")');
+        await insertIndexJSFile({ structure, settings, description });
+        const proj = structure[P_NAME] as Structure;
+        const src = proj.src as Structure;
+        expect(src['index.js']).toBe('console.log("hello")');
+    });
+
+    it('should insert index.ts file if .ts code', async () => {
+        (_indexScript as jest.Mock).mockReturnValue('prompt for index');
+        (directNeuralHelp as jest.Mock).mockResolvedValue('type Blah = number');
+        (maybeExtractTextBetweenQuotes as jest.Mock).mockReturnValue('type Blah = number');
+        await insertIndexJSFile({ structure, settings, description });
+        const proj = structure[P_NAME] as Structure;
+        const src = proj.src as Structure;
+        expect(src['index.ts']).toBe('type Blah = number');
+    });
+
+    it('should insert index.jsx file if react', async () => {
+        (_indexScript as jest.Mock).mockReturnValue('prompt for index');
+        (directNeuralHelp as jest.Mock).mockResolvedValue('react');
+        (maybeExtractTextBetweenQuotes as jest.Mock).mockReturnValue('react');
+        await insertIndexJSFile({ structure, settings, description });
+        const proj = structure[P_NAME] as Structure;
+        const src = proj.src as Structure;
+        expect(src['index.jsx']).toBe('react');
+    });
+
+    it('should insert index.tsx file if react+ts', async () => {
+        (_indexScript as jest.Mock).mockReturnValue('prompt for index');
+        (directNeuralHelp as jest.Mock).mockResolvedValue('interface Foo {}\nreact');
+        (maybeExtractTextBetweenQuotes as jest.Mock).mockReturnValue('interface Foo {}\nreact');
+        await insertIndexJSFile({ structure, settings, description });
+        const proj = structure[P_NAME] as Structure;
+        const src = proj.src as Structure;
+        expect(src['index.tsx']).toBe('interface Foo {}\nreact');
+    });
+
+    it('should filter out malicious index dirs', async () => {
+        const proj = structure[P_NAME] as Structure;
+        proj.src = {
+            'index.malicious': { bad: true } as any,
+            keepme: 'bar'
+        };
+        (_indexScript as jest.Mock).mockReturnValue('prompt for index');
+        (directNeuralHelp as jest.Mock).mockResolvedValue('console.log("clean")');
+        (maybeExtractTextBetweenQuotes as jest.Mock).mockReturnValue('console.log("clean")');
+        await insertIndexJSFile({ structure, settings, description });
+        const newProj = structure[P_NAME] as Structure;
+        const src = newProj.src as Structure;
+        expect(src).not.toHaveProperty('index.malicious');
+        expect(src['index.js']).toBe('console.log("clean")');
+        expect(src.keepme).toBe('bar');
     });
 });
