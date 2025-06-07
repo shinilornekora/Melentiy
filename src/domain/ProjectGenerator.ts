@@ -14,7 +14,7 @@ import {
 import { Project } from "./types.js";
 import { validateBundleFile, validateIndexFile } from "./services/validateService.js";
 
-const initialProjectState = {
+export const initialProjectState = {
     settings: {
         A_TYPE: "module",
         P_NAME: "unknown",
@@ -27,7 +27,7 @@ const initialProjectState = {
 
 export class ProjectGenerator {
     private readonly description: string;
-    private project: Project;
+    project: Project;
 
     constructor(text: string) {
         this.description = text;

@@ -83,7 +83,7 @@ export async function insertBasicIndexStyles({ structure, settings, description 
     return structure;
 }
 
-function getIndexFileName(scriptContent: string) {
+export function getIndexFileName(scriptContent: string) {
     const isTS = scriptContent.includes('interface') || scriptContent.includes('type');
 
     if (scriptContent.includes('react')) {

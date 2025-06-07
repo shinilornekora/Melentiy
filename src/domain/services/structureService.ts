@@ -15,5 +15,6 @@ export async function getProjectStructure({ A_TYPE, DEPS }: Settings) {
 
     // Убираем возможное оформление markdown
     structure = structure.replace(/```json/g, '').replace(/`/g, '');
+
     return JSON.parse(structure);
 }
